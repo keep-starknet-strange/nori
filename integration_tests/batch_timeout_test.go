@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/abdelhamidbakhta/nori"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,8 +21,8 @@ func TestBatchTimeout(t *testing.T) {
 	require.NoError(t, os.Setenv("SLOW_BACKEND_RPC_URL", slowBackend.URL()))
 
 	config := ReadConfig("batch_timeout")
-	client := Newstarknet - proxydClient("http://127.0.0.1:8545")
-	_, shutdown, err := starknet - proxyd.Start(config)
+	client := NewnoriClient("http://127.0.0.1:8545")
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 

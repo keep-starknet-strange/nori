@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/abdelhamidbakhta/nori"
 	"github.com/stretchr/testify/require"
 )
 
@@ -25,8 +26,8 @@ func TestSingleRPCValidation(t *testing.T) {
 	require.NoError(t, os.Setenv("GOOD_BACKEND_RPC_URL", goodBackend.URL()))
 
 	config := ReadConfig("whitelist")
-	client := Newstarknet - proxydClient("http://127.0.0.1:8545")
-	_, shutdown, err := starknet - proxyd.Start(config)
+	client := NewnoriClient("http://127.0.0.1:8545")
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 
@@ -109,8 +110,8 @@ func TestBatchRPCValidation(t *testing.T) {
 	require.NoError(t, os.Setenv("GOOD_BACKEND_RPC_URL", goodBackend.URL()))
 
 	config := ReadConfig("whitelist")
-	client := Newstarknet - proxydClient("http://127.0.0.1:8545")
-	_, shutdown, err := starknet - proxyd.Start(config)
+	client := NewnoriClient("http://127.0.0.1:8545")
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 
@@ -234,8 +235,8 @@ func TestSizeLimits(t *testing.T) {
 	require.NoError(t, os.Setenv("GOOD_BACKEND_RPC_URL", goodBackend.URL()))
 
 	config := ReadConfig("size_limits")
-	client := Newstarknet - proxydClient("http://127.0.0.1:8545")
-	_, shutdown, err := starknet - proxyd.Start(config)
+	client := NewnoriClient("http://127.0.0.1:8545")
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 

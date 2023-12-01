@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/BurntSushi/toml"
+	"github.com/abdelhamidbakhta/nori"
 	"github.com/ethereum/go-ethereum/log"
 )
 
@@ -35,7 +36,7 @@ func main() {
 		log.Crit("must specify a config file on the command line")
 	}
 
-	config := new(starknet - proxyd.Config)
+	config := new(nori.Config)
 	if _, err := toml.DecodeFile(os.Args[1], config); err != nil {
 		log.Crit("error reading config file", "err", err)
 	}
@@ -66,7 +67,7 @@ func main() {
 		}()
 	}
 
-	_, shutdown, err := starknet - proxyd.Start(config)
+	_, shutdown, err := nori.Start(config)
 	if err != nil {
 		log.Crit("error starting nori", "err", err)
 	}

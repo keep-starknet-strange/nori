@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/abdelhamidbakhta/nori"
 	"github.com/stretchr/testify/require"
 )
 
@@ -39,8 +40,8 @@ func TestMaxConcurrentRPCs(t *testing.T) {
 	require.NoError(t, os.Setenv("GOOD_BACKEND_RPC_URL", slowBackend.URL))
 
 	config := ReadConfig("max_rpc_conns")
-	client := Newstarknet - proxydClient("http://127.0.0.1:8545")
-	_, shutdown, err := starknet - proxyd.Start(config)
+	client := NewnoriClient("http://127.0.0.1:8545")
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 

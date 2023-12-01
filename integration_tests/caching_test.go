@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/abdelhamidbakhta/nori"
 	"github.com/alicebob/miniredis"
 	"github.com/stretchr/testify/require"
 )
@@ -38,8 +39,8 @@ func TestCaching(t *testing.T) {
 	require.NoError(t, os.Setenv("GOOD_BACKEND_RPC_URL", backend.URL()))
 	require.NoError(t, os.Setenv("REDIS_URL", fmt.Sprintf("redis://127.0.0.1:%s", redis.Port())))
 	config := ReadConfig("caching")
-	client := Newstarknet - proxydClient("http://127.0.0.1:8545")
-	_, shutdown, err := starknet - proxyd.Start(config)
+	client := NewnoriClient("http://127.0.0.1:8545")
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 
@@ -224,8 +225,8 @@ func TestBatchCaching(t *testing.T) {
 	require.NoError(t, os.Setenv("REDIS_URL", fmt.Sprintf("redis://127.0.0.1:%s", redis.Port())))
 
 	config := ReadConfig("caching")
-	client := Newstarknet - proxydClient("http://127.0.0.1:8545")
-	_, shutdown, err := starknet - proxyd.Start(config)
+	client := NewnoriClient("http://127.0.0.1:8545")
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 

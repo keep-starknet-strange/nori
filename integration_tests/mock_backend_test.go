@@ -10,6 +10,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/abdelhamidbakhta/nori"
 	"github.com/gorilla/websocket"
 )
 
@@ -127,14 +128,14 @@ func (h *BatchRPCResponseRouter) ServeHTTP(w http.ResponseWriter, r *http.Reques
 		panic(err)
 	}
 
-	if starknet - proxyd.IsBatch(body) {
-		batch, err := starknet - proxyd.ParseBatchRPCReq(body)
+	if nori.IsBatch(body) {
+		batch, err := nori.ParseBatchRPCReq(body)
 		if err != nil {
 			panic(err)
 		}
 		out := make([]*nori.RPCRes, len(batch))
 		for i := range batch {
-			req, err := starknet - proxyd.ParseRPCReq(batch[i])
+			req, err := nori.ParseRPCReq(batch[i])
 			if err != nil {
 				panic(err)
 			}
@@ -157,8 +158,8 @@ func (h *BatchRPCResponseRouter) ServeHTTP(w http.ResponseWriter, r *http.Reques
 				return
 			}
 
-			out[i] = &starknet - proxyd.RPCRes{
-				JSONRPC: starknet - proxyd.JSONRPCVersion,
+			out[i] = &nori.RPCRes{
+				JSONRPC: nori.JSONRPCVersion,
 				Result:  result,
 				ID:      req.ID,
 			}
@@ -169,7 +170,7 @@ func (h *BatchRPCResponseRouter) ServeHTTP(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	req, err := starknet - proxyd.ParseRPCReq(body)
+	req, err := nori.ParseRPCReq(body)
 	if err != nil {
 		panic(err)
 	}
@@ -192,8 +193,8 @@ func (h *BatchRPCResponseRouter) ServeHTTP(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	out := &starknet - proxyd.RPCRes{
-		JSONRPC: starknet - proxyd.JSONRPCVersion,
+	out := &nori.RPCRes{
+		JSONRPC: nori.JSONRPCVersion,
 		Result:  result,
 		ID:      req.ID,
 	}

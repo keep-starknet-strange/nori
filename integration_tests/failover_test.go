@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/abdelhamidbakhta/nori"
 	"github.com/alicebob/miniredis"
 	"github.com/stretchr/testify/require"
 )
@@ -28,8 +29,8 @@ func TestFailover(t *testing.T) {
 	require.NoError(t, os.Setenv("BAD_BACKEND_RPC_URL", badBackend.URL()))
 
 	config := ReadConfig("failover")
-	client := Newstarknet - proxydClient("http://127.0.0.1:8545")
-	_, shutdown, err := starknet - proxyd.Start(config)
+	client := NewnoriClient("http://127.0.0.1:8545")
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 
@@ -126,8 +127,8 @@ func TestRetries(t *testing.T) {
 
 	require.NoError(t, os.Setenv("GOOD_BACKEND_RPC_URL", backend.URL()))
 	config := ReadConfig("retries")
-	client := Newstarknet - proxydClient("http://127.0.0.1:8545")
-	_, shutdown, err := starknet - proxyd.Start(config)
+	client := NewnoriClient("http://127.0.0.1:8545")
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 
@@ -169,8 +170,8 @@ func TestOutOfServiceInterval(t *testing.T) {
 	require.NoError(t, os.Setenv("BAD_BACKEND_RPC_URL", badBackend.URL()))
 
 	config := ReadConfig("out_of_service_interval")
-	client := Newstarknet - proxydClient("http://127.0.0.1:8545")
-	_, shutdown, err := starknet - proxyd.Start(config)
+	client := NewnoriClient("http://127.0.0.1:8545")
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 
@@ -224,8 +225,8 @@ func TestBatchWithPartialFailover(t *testing.T) {
 	require.NoError(t, os.Setenv("GOOD_BACKEND_RPC_URL", goodBackend.URL()))
 	require.NoError(t, os.Setenv("BAD_BACKEND_RPC_URL", badBackend.URL()))
 
-	client := Newstarknet - proxydClient("http://127.0.0.1:8545")
-	_, shutdown, err := starknet - proxyd.Start(config)
+	client := NewnoriClient("http://127.0.0.1:8545")
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 
@@ -270,8 +271,8 @@ func TestInfuraFailoverOnUnexpectedResponse(t *testing.T) {
 	require.NoError(t, os.Setenv("GOOD_BACKEND_RPC_URL", goodBackend.URL()))
 	require.NoError(t, os.Setenv("BAD_BACKEND_RPC_URL", badBackend.URL()))
 
-	client := Newstarknet - proxydClient("http://127.0.0.1:8545")
-	_, shutdown, err := starknet - proxyd.Start(config)
+	client := NewnoriClient("http://127.0.0.1:8545")
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 

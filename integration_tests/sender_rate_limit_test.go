@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/abdelhamidbakhta/nori"
 	"github.com/stretchr/testify/require"
 )
 
@@ -39,8 +40,8 @@ func TestSenderRateLimitValidation(t *testing.T) {
 	// Don't perform rate limiting in this test since we're only testing
 	// validation.
 	config.SenderRateLimit.Limit = math.MaxInt
-	client := Newstarknet - proxydClient("http://127.0.0.1:8545")
-	_, shutdown, err := starknet - proxyd.Start(config)
+	client := NewnoriClient("http://127.0.0.1:8545")
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 
@@ -69,8 +70,8 @@ func TestSenderRateLimitLimiting(t *testing.T) {
 	require.NoError(t, os.Setenv("GOOD_BACKEND_RPC_URL", goodBackend.URL()))
 
 	config := ReadConfig("sender_rate_limit")
-	client := Newstarknet - proxydClient("http://127.0.0.1:8545")
-	_, shutdown, err := starknet - proxyd.Start(config)
+	client := NewnoriClient("http://127.0.0.1:8545")
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 
