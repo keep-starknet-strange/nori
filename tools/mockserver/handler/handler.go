@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/abdelhamidbakhta/starknet-proxyd"
+	"github.com/abdelhamidbakhta/nori"
 
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
@@ -57,7 +57,7 @@ func (mh *MockedHandler) Handler(w http.ResponseWriter, req *http.Request) {
 		template = append(template, mh.Overrides...)
 	}
 
-	batched := starknet-proxyd.IsBatch(body)
+	batched := nori.IsBatch(body)
 	var requests []map[string]interface{}
 	if batched {
 		err = json.Unmarshal(body, &requests)
@@ -88,7 +88,7 @@ func (mh *MockedHandler) Handler(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 		if selectedResponse != "" {
-			var rpcRes starknet-proxyd.RPCRes
+			var rpcRes nori.RPCRes
 			err = json.Unmarshal([]byte(selectedResponse), &rpcRes)
 			if err != nil {
 				panic(err)

@@ -12,19 +12,19 @@ import (
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
 
-	"github.com/abdelhamidbakhta/starknet-proxyd"
-	ms "github.com/abdelhamidbakhta/starknet-proxyd/tools/mockserver/handler"
+	"github.com/abdelhamidbakhta/nori"
+	ms "github.com/abdelhamidbakhta/nori/tools/mockserver/handler"
 
 	"github.com/stretchr/testify/require"
 )
 
 type nodeContext struct {
-	backend     *starknet-proxyd.Backend   // this is the actual backend impl in starknet-proxyd
+	backend     *nori.Backend     // this is the actual backend impl in nori
 	mockBackend *MockBackend      // this is the fake backend that we can use to mock responses
 	handler     *ms.MockedHandler // this is where we control the state of mocked responses
 }
 
-func setup(t *testing.T) (map[string]nodeContext, *starknet-proxyd.BackendGroup, *starknet-proxydHTTPClient, func()) {
+func setup(t *testing.T) (map[string]nodeContext, *nori.BackendGroup, *noriHTTPClient, func()) {
 	// setup mock servers
 	node1 := NewMockBackend(nil)
 	node2 := NewMockBackend(nil)
@@ -51,13 +51,13 @@ func setup(t *testing.T) (map[string]nodeContext, *starknet-proxyd.BackendGroup,
 	node1.SetHandler(http.HandlerFunc(h1.Handler))
 	node2.SetHandler(http.HandlerFunc(h2.Handler))
 
-	// setup starknet-proxyd
+	// setup nori
 	config := ReadConfig("consensus")
-	svr, shutdown, err := starknet-proxyd.Start(config)
+	svr, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 
-	// expose the starknet-proxyd client
-	client := Newstarknet-proxydClient("http://127.0.0.1:8545")
+	// expose the nori client
+	client := NewnoriClient("http://127.0.0.1:8545")
 
 	// expose the backend group
 	bg := svr.BackendGroups["node"]
@@ -877,8 +877,8 @@ func TestConsensus(t *testing.T) {
 		// reset request counts
 		nodes["node1"].mockBackend.Reset()
 
-		nodes["node1"].backend.Override(starknet-proxyd.WithConsensusReceiptTarget("alchemy_getTransactionReceipts"))
-		defer nodes["node1"].backend.Override(starknet-proxyd.WithConsensusReceiptTarget("debug_getRawReceipts"))
+		nodes["node1"].backend.Override(nori.WithConsensusReceiptTarget("alchemy_getTransactionReceipts"))
+		defer nodes["node1"].backend.Override(nori.WithConsensusReceiptTarget("debug_getRawReceipts"))
 
 		resRaw, statusCode, err := client.SendRPC("consensus_getReceipts",
 			[]interface{}{"0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b"})
@@ -909,8 +909,8 @@ func TestConsensus(t *testing.T) {
 		// reset request counts
 		nodes["node1"].mockBackend.Reset()
 
-		nodes["node1"].backend.Override(starknet-proxyd.WithConsensusReceiptTarget("alchemy_getTransactionReceipts"))
-		defer nodes["node1"].backend.Override(starknet-proxyd.WithConsensusReceiptTarget("debug_getRawReceipts"))
+		nodes["node1"].backend.Override(nori.WithConsensusReceiptTarget("alchemy_getTransactionReceipts"))
+		defer nodes["node1"].backend.Override(nori.WithConsensusReceiptTarget("debug_getRawReceipts"))
 
 		resRaw, statusCode, err := client.SendRPC("consensus_getReceipts",
 			[]interface{}{"0x55"})
@@ -941,8 +941,8 @@ func TestConsensus(t *testing.T) {
 		// reset request counts
 		nodes["node1"].mockBackend.Reset()
 
-		nodes["node1"].backend.Override(starknet-proxyd.WithConsensusReceiptTarget("alchemy_getTransactionReceipts"))
-		defer nodes["node1"].backend.Override(starknet-proxyd.WithConsensusReceiptTarget("debug_getRawReceipts"))
+		nodes["node1"].backend.Override(nori.WithConsensusReceiptTarget("alchemy_getTransactionReceipts"))
+		defer nodes["node1"].backend.Override(nori.WithConsensusReceiptTarget("debug_getRawReceipts"))
 
 		resRaw, statusCode, err := client.SendRPC("consensus_getReceipts",
 			[]interface{}{"latest"})
@@ -969,8 +969,8 @@ func TestConsensus(t *testing.T) {
 		reset()
 		useOnlyNode1()
 
-		nodes["node1"].backend.Override(starknet-proxyd.WithConsensusReceiptTarget("unsupported_consensus_receipts_target"))
-		defer nodes["node1"].backend.Override(starknet-proxyd.WithConsensusReceiptTarget("debug_getRawReceipts"))
+		nodes["node1"].backend.Override(nori.WithConsensusReceiptTarget("unsupported_consensus_receipts_target"))
+		defer nodes["node1"].backend.Override(nori.WithConsensusReceiptTarget("debug_getRawReceipts"))
 
 		_, statusCode, err := client.SendRPC("consensus_getReceipts",
 			[]interface{}{"latest"})
@@ -993,7 +993,7 @@ func TestConsensus(t *testing.T) {
 }
 
 func buildResponse(result interface{}) string {
-	res, err := json.Marshal(starknet-proxyd.RPCRes{
+	res, err := json.Marshal(nori.RPCRes{
 		Result: result,
 	})
 	if err != nil {

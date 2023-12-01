@@ -1,18 +1,14 @@
 # List of WS methods to whitelist.
-ws_method_whitelist = [
-  "eth_subscribe",
-  "eth_call",
-  "eth_chainId"
-]
+ws_method_whitelist = ["eth_subscribe", "eth_call", "eth_chainId"]
 # Enable WS on this backend group. There can only be one WS-enabled backend group.
 ws_backend_group = "main"
 
 [server]
-# Host for the starknet-proxyd RPC server to listen on.
+# Host for the nori RPC server to listen on.
 rpc_host = "0.0.0.0"
 # Port for the above.
 rpc_port = 8080
-# Host for the starknet-proxyd WS server to listen on.
+# Host for the nori WS server to listen on.
 ws_host = "0.0.0.0"
 # Port for the above
 # Set the ws_port to 0 to disable WS
@@ -36,11 +32,11 @@ host = "0.0.0.0"
 port = 9761
 
 [backend]
-# How long starknet-proxyd should wait for a backend response before timing out.
+# How long nori should wait for a backend response before timing out.
 response_timeout_seconds = 5
-# Maximum response size, in bytes, that starknet-proxyd will accept from a backend.
+# Maximum response size, in bytes, that nori will accept from a backend.
 max_response_size_bytes = 5242880
-# Maximum number of times starknet-proxyd will try a backend before giving up.
+# Maximum number of times nori will try a backend before giving up.
 max_retries = 3
 # Number of seconds to wait before trying an unhealthy backend again.
 out_of_service_seconds = 600
@@ -75,7 +71,7 @@ client_key_file = ""
 # Allows backends to skip peer count checking, default false
 # consensus_skip_peer_count = true
 # Specified the target method to get receipts, default "debug_getRawReceipts"
-# See https://github.com/ethereum-optimism/optimism/blob/186e46a47647a51a658e699e9ff047d39444c2de/op-node/sources/receipts.go#L186-L253
+# See https://github.com/abdelhamidbakhta/nori/blob/186e46a47647a51a658e699e9ff047d39444c2de/op-node/sources/receipts.go#L186-L253
 consensus_receipts_target = "eth_getBlockReceipts"
 
 [backends.alchemy]
@@ -107,7 +103,7 @@ backends = ["infura"]
 backends = ["alchemy"]
 
 # If the authentication group below is in the config,
-# starknet-proxyd will only accept authenticated requests.
+# nori will only accept authenticated requests.
 [authentication]
 # Mapping of auth key to alias. The alias is used to provide a human-
 # readable name for the auth key in monitoring. The auth key will be

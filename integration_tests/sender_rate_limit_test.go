@@ -9,7 +9,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum-optimism/optimism/starknet-proxyd"
 	"github.com/stretchr/testify/require"
 )
 

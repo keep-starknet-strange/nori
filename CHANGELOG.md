@@ -1,10 +1,10 @@
-# @eth-optimism/starknet-proxyd
+# @eth-optimism/nori
 
 ## 3.14.1
 
 ### Patch Changes
 
-- 5602deec7: chore(deps): bump github.com/prometheus/client_golang from 1.11.0 to 1.11.1 in /starknet-proxyd
+- 5602deec7: chore(deps): bump github.com/prometheus/client_golang from 1.11.0 to 1.11.1 in /nori
 - 6b3cf2070: Remove useless logging
 
 ## 3.14.0
@@ -16,7 +16,7 @@
 
 ### Patch Changes
 
-- b9bb1a98a: starknet-proxyd: Add req_id to log
+- b9bb1a98a: nori: Add req_id to log
 
 ## 3.13.0
 
@@ -99,22 +99,22 @@
 
 ### Patch Changes
 
-- d79d40c4: starknet-proxyd: Proxy requests using batch JSON-RPC
+- d79d40c4: nori: Proxy requests using batch JSON-RPC
 
 ## 3.8.5
 
 ### Patch Changes
 
-- 2a062b11: starknet-proxyd: Log ssanitized RPC requests
-- d9f058ce: starknet-proxyd: Reduced RPC request logging
-- a4bfd9e7: starknet-proxyd: Limit the number of concurrent RPCs to backends
+- 2a062b11: nori: Log ssanitized RPC requests
+- d9f058ce: nori: Reduced RPC request logging
+- a4bfd9e7: nori: Limit the number of concurrent RPCs to backends
 
 ## 3.8.4
 
 ### Patch Changes
 
-- 08329ba2: starknet-proxyd: Record redis cache operation latency
-- ae112021: starknet-proxyd: Request-scoped context for fast batch RPC short-circuiting
+- 08329ba2: nori: Record redis cache operation latency
+- ae112021: nori: Request-scoped context for fast batch RPC short-circuiting
 
 ## 3.8.3
 
@@ -144,42 +144,42 @@
 
 ### Minor Changes
 
-- 3c2926b1: Add debug cache status header to starknet-proxyd responses
+- 3c2926b1: Add debug cache status header to nori responses
 
 ## 3.6.0
 
 ### Minor Changes
 
-- 096c5f20: starknet-proxyd: Allow cached RPCs to be evicted by redis
+- 096c5f20: nori: Allow cached RPCs to be evicted by redis
 - 71d64834: Add caching for block-dependent RPCs
-- fd2e1523: starknet-proxyd: Cache block-dependent RPCs
+- fd2e1523: nori: Cache block-dependent RPCs
 - 1760613c: Add integration tests and batching
 
 ## 3.5.0
 
 ### Minor Changes
 
-- 025a3c0d: Add request/response payload size metrics to starknet-proxyd
-- daf8db0b: cache immutable RPC responses in starknet-proxyd
-- 8aa89bf3: Add X-Forwarded-For header when proxying RPCs on starknet-proxyd
+- 025a3c0d: Add request/response payload size metrics to nori
+- daf8db0b: cache immutable RPC responses in nori
+- 8aa89bf3: Add X-Forwarded-For header when proxying RPCs on nori
 
 ## 3.4.1
 
 ### Patch Changes
 
-- 415164e1: Force starknet-proxyd build
+- 415164e1: Force nori build
 
 ## 3.4.0
 
 ### Minor Changes
 
-- 4b56ed84: Various starknet-proxyd fixes
+- 4b56ed84: Various nori fixes
 
 ## 3.3.0
 
 ### Minor Changes
 
-- 7b7ffd2e: Allows string RPC ids on starknet-proxyd
+- 7b7ffd2e: Allows string RPC ids on nori
 
 ## 3.2.0
 
@@ -191,14 +191,14 @@
 
 ### Patch Changes
 
-- 1b79aa62: Release starknet-proxyd
+- 1b79aa62: Release nori
 
 ## 3.1.1
 
 ### Patch Changes
 
-- b8802054: Trigger release of starknet-proxyd
-- 34fcb277: Bump starknet-proxyd to test release build workflow
+- b8802054: Trigger release of nori
+- 34fcb277: Bump nori to test release build workflow
 
 ## 3.1.0
 
@@ -225,7 +225,7 @@
 
 ### Minor Changes
 
-- 8cc824e5: Updates starknet-proxyd to include additional error metrics.
+- 8cc824e5: Updates nori to include additional error metrics.
 - 9ba4c5e0: Update metrics, support authenticated endpoints
 - 78d0f3f0: Put special errors in a dedicated metric, pass along the content-type header
 

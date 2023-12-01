@@ -1,4 +1,4 @@
-package starknet-proxyd
+package nori
 
 import (
 	"context"

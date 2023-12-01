@@ -1,6 +1,10 @@
-# rpc-proxy
+# Nori
 
-This tool implements `starknet-proxyd`, an RPC request router and proxy. It does the following things:
+Nori (のり) - Derived from "Norikae" (乗り換え), meaning transfer or switch, this name reflects the idea of efficiently switching or balancing network requests, akin to a load balancer or router.
+
+It's essentially a fork of [Optimism proxyd](https://github.com/ethereum-optimism/optimism/tree/develop/proxyd), adapted to work with Starknet.
+
+This tool implements `nori`, an RPC request router and proxy. It does the following things:
 
 1. Whitelists RPC methods.
 2. Routes RPC methods to groups of backend services.
@@ -14,20 +18,20 @@ This tool implements `starknet-proxyd`, an RPC request router and proxy. It does
 
 ## Usage
 
-Run `make starknet-proxyd` to build the binary. No additional dependencies are necessary.
+Run `make nori` to build the binary. No additional dependencies are necessary.
 
-To configure `starknet-proxyd` for use, you'll need to create a configuration file to define your proxy backends and routing rules.  Check out [example.config.toml](./example.config.toml) for how to do this alongside a full list of all options with commentary.
+To configure `nori` for use, you'll need to create a configuration file to define your proxy backends and routing rules.  Check out [example.config.toml](./example.config.toml) for how to do this alongside a full list of all options with commentary.
 
-Once you have a config file, start the daemon via `starknet-proxyd <path-to-config>.toml`.
+Once you have a config file, start the daemon via `nori <path-to-config>.toml`.
 
 
 ## Consensus awareness
 
-Starting on v4.0.0, `starknet-proxyd` is aware of the consensus state of its backends. This helps minimize chain reorgs experienced by clients.
+Starting on v4.0.0, `nori` is aware of the consensus state of its backends. This helps minimize chain reorgs experienced by clients.
 
 To enable this behavior, you must set `consensus_aware` value to `true` in the backend group.
 
-When consensus awareness is enabled, `starknet-proxyd` will poll the backends for their states and resolve a consensus group based on:
+When consensus awareness is enabled, `nori` will poll the backends for their states and resolve a consensus group based on:
 * the common ancestor `latest` block, i.e. if a backend is experiencing a fork, the fork won't be visible to the clients
 * the lowest `safe` block
 * the lowest `finalized` block
@@ -52,10 +56,10 @@ and won't receive any traffic during this period.
 
 ## Tag rewrite
 
-When consensus awareness is enabled, `starknet-proxyd` will enforce the consensus state transparently for all the clients.
+When consensus awareness is enabled, `nori` will enforce the consensus state transparently for all the clients.
 
 For example, if a client requests the `eth_getBlockByNumber` method with the `latest` tag,
-`starknet-proxyd` will rewrite the request to use the resolved latest block from the consensus group
+`nori` will rewrite the request to use the resolved latest block from the consensus group
 and forward it to the backend.
 
 The following request methods are rewritten:
@@ -92,7 +96,7 @@ Cache use Redis and can be enabled for the following immutable methods:
 ## Meta method `consensus_getReceipts`
 
 To support backends with different specifications in the same backend group,
-starknet-proxyd exposes a convenient method to fetch receipts abstracting away
+nori exposes a convenient method to fetch receipts abstracting away
 what specific backend will serve the request.
 
 Each backend specifies their preferred method to fetch receipts with `consensus_receipts_target` config,
@@ -132,7 +136,7 @@ Response example
 }
 ```
 
-See [op-node receipt fetcher](https://github.com/ethereum-optimism/optimism/blob/186e46a47647a51a658e699e9ff047d39444c2de/op-node/sources/receipts.go#L186-L253).
+See [op-node receipt fetcher](https://github.com/abdelhamidbakhta/nori/blob/186e46a47647a51a658e699e9ff047d39444c2de/op-node/sources/receipts.go#L186-L253).
 
 
 ## Metrics
@@ -143,4 +147,4 @@ The metrics port is configurable via the `metrics.port` and `metrics.host` keys 
 
 ## Adding Backend SSL Certificates in Docker
 
-The Docker image runs on Alpine Linux. If you get SSL errors when connecting to a backend within Docker, you may need to add additional certificates to Alpine's certificate store. To do this, bind mount the certificate bundle into a file in `/usr/local/share/ca-certificates`. The `entrypoint.sh` script will then update the store with whatever is in the `ca-certificates` directory prior to starting `starknet-proxyd`.
+The Docker image runs on Alpine Linux. If you get SSL errors when connecting to a backend within Docker, you may need to add additional certificates to Alpine's certificate store. To do this, bind mount the certificate bundle into a file in `/usr/local/share/ca-certificates`. The `entrypoint.sh` script will then update the store with whatever is in the `ca-certificates` directory prior to starting `nori`.

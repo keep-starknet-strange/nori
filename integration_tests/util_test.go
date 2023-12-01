@@ -14,31 +14,31 @@ import (
 
 	"github.com/gorilla/websocket"
 
-	"github.com/abdelhamidbakhta/starknet-proxyd"
+	"github.com/abdelhamidbakhta/nori"
 
 	"github.com/BurntSushi/toml"
 	"github.com/stretchr/testify/require"
 )
 
-type starknet-proxydHTTPClient struct {
+type noriHTTPClient struct {
 	url     string
 	headers http.Header
 }
 
-func Newstarknet-proxydClient(url string) *starknet-proxydHTTPClient {
-	return Newstarknet-proxydClientWithHeaders(url, make(http.Header))
+func NewnoriClient(url string) *noriHTTPClient {
+	return NewnoriClientWithHeaders(url, make(http.Header))
 }
 
-func Newstarknet-proxydClientWithHeaders(url string, headers http.Header) *starknet-proxydHTTPClient {
+func NewnoriClientWithHeaders(url string, headers http.Header) *noriHTTPClient {
 	clonedHeaders := headers.Clone()
 	clonedHeaders.Set("Content-Type", "application/json")
-	return &starknet-proxydHTTPClient{
+	return &noriHTTPClient{
 		url:     url,
 		headers: clonedHeaders,
 	}
 }
 
-func (p *starknet-proxydHTTPClient) SendRPC(method string, params []interface{}) ([]byte, int, error) {
+func (p *noriHTTPClient) SendRPC(method string, params []interface{}) ([]byte, int, error) {
 	rpcReq := NewRPCReq("999", method, params)
 	body, err := json.Marshal(rpcReq)
 	if err != nil {
@@ -47,7 +47,7 @@ func (p *starknet-proxydHTTPClient) SendRPC(method string, params []interface{})
 	return p.SendRequest(body)
 }
 
-func (p *starknet-proxydHTTPClient) SendBatchRPC(reqs ...*starknet-proxyd.RPCReq) ([]byte, int, error) {
+func (p *noriHTTPClient) SendBatchRPC(reqs ...*nori.RPCReq) ([]byte, int, error) {
 	body, err := json.Marshal(reqs)
 	if err != nil {
 		panic(err)
@@ -55,7 +55,7 @@ func (p *starknet-proxydHTTPClient) SendBatchRPC(reqs ...*starknet-proxyd.RPCReq
 	return p.SendRequest(body)
 }
 
-func (p *starknet-proxydHTTPClient) SendRequest(body []byte) ([]byte, int, error) {
+func (p *noriHTTPClient) SendRequest(body []byte) ([]byte, int, error) {
 	req, err := http.NewRequest("POST", p.url, bytes.NewReader(body))
 	if err != nil {
 		panic(err)
@@ -96,8 +96,8 @@ func canonicalizeJSON(t *testing.T, in []byte) []byte {
 	return out
 }
 
-func ReadConfig(name string) *starknet-proxyd.Config {
-	config := new(starknet-proxyd.Config)
+func ReadConfig(name string) *nori.Config {
+	config := new(nori.Config)
 	_, err := toml.DecodeFile(fmt.Sprintf("testdata/%s.toml", name), config)
 	if err != nil {
 		panic(err)
@@ -105,24 +105,24 @@ func ReadConfig(name string) *starknet-proxyd.Config {
 	return config
 }
 
-func NewRPCReq(id string, method string, params []interface{}) *starknet-proxyd.RPCReq {
+func NewRPCReq(id string, method string, params []interface{}) *nori.RPCReq {
 	jsonParams, err := json.Marshal(params)
 	if err != nil {
 		panic(err)
 	}
 
-	return &starknet-proxyd.RPCReq{
-		JSONRPC: starknet-proxyd.JSONRPCVersion,
+	return &nori.RPCReq{
+		JSONRPC: nori.JSONRPCVersion,
 		Method:  method,
 		Params:  jsonParams,
 		ID:      []byte(id),
 	}
 }
 
-type starknet-proxydWSClient struct {
+type noriWSClient struct {
 	conn    *websocket.Conn
-	msgCB   starknet-proxydWSClientOnMessage
-	closeCB starknet-proxydWSClientOnClose
+	msgCB   noriWSClientOnMessage
+	closeCB noriWSClientOnClose
 }
 
 type WSMessage struct {
@@ -130,20 +130,20 @@ type WSMessage struct {
 	Body []byte
 }
 
-type starknet-proxydWSClientOnMessage func(msgType int, data []byte)
-type starknet-proxydWSClientOnClose func(err error)
+type noriWSClientOnMessage func(msgType int, data []byte)
+type noriWSClientOnClose func(err error)
 
-func Newstarknet-proxydWSClient(
+func NewnoriWSClient(
 	url string,
-	msgCB starknet-proxydWSClientOnMessage,
-	closeCB starknet-proxydWSClientOnClose,
-) (*starknet-proxydWSClient, error) {
+	msgCB noriWSClientOnMessage,
+	closeCB noriWSClientOnClose,
+) (*noriWSClient, error) {
 	conn, _, err := websocket.DefaultDialer.Dial(url, nil) // nolint:bodyclose
 	if err != nil {
 		return nil, err
 	}
 
-	c := &starknet-proxydWSClient{
+	c := &noriWSClient{
 		conn:    conn,
 		msgCB:   msgCB,
 		closeCB: closeCB,
@@ -152,7 +152,7 @@ func Newstarknet-proxydWSClient(
 	return c, nil
 }
 
-func (h *starknet-proxydWSClient) readPump() {
+func (h *noriWSClient) readPump() {
 	for {
 		mType, msg, err := h.conn.ReadMessage()
 		if err != nil {
@@ -167,19 +167,19 @@ func (h *starknet-proxydWSClient) readPump() {
 	}
 }
 
-func (h *starknet-proxydWSClient) HardClose() {
+func (h *noriWSClient) HardClose() {
 	h.conn.Close()
 }
 
-func (h *starknet-proxydWSClient) SoftClose() error {
+func (h *noriWSClient) SoftClose() error {
 	return h.WriteMessage(websocket.CloseMessage, nil)
 }
 
-func (h *starknet-proxydWSClient) WriteMessage(msgType int, msg []byte) error {
+func (h *noriWSClient) WriteMessage(msgType int, msg []byte) error {
 	return h.conn.WriteMessage(msgType, msg)
 }
 
-func (h *starknet-proxydWSClient) WriteControlMessage(msgType int, msg []byte) error {
+func (h *noriWSClient) WriteControlMessage(msgType int, msg []byte) error {
 	return h.conn.WriteControl(msgType, msg, time.Now().Add(time.Minute))
 }
 

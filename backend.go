@@ -1,4 +1,4 @@
-package starknet-proxyd
+package nori
 
 import (
 	"bytes"
@@ -25,7 +25,7 @@ import (
 	"github.com/xaionaro-go/weightedshuffle"
 	"golang.org/x/sync/semaphore"
 
-	sw "github.com/abdelhamidbakhta/starknet-proxyd/pkg/avg-sliding-window"
+	sw "github.com/abdelhamidbakhta/nori/pkg/avg-sliding-window"
 )
 
 const (
@@ -149,7 +149,7 @@ type Backend struct {
 	maxWSConns           int
 	outOfServiceInterval time.Duration
 	stripTrailingXFF     bool
-	starknet-proxydIP             string
+	noriIP               string
 
 	skipPeerCountCheck bool
 	forcedCandidate    bool
@@ -231,9 +231,9 @@ func WithStrippedTrailingXFF() BackendOpt {
 	}
 }
 
-func Withstarknet-proxydIP(ip string) BackendOpt {
+func WithnoriIP(ip string) BackendOpt {
 	return func(b *Backend) {
-		b.starknet-proxydIP = ip
+		b.noriIP = ip
 	}
 }
 
@@ -333,8 +333,8 @@ func NewBackend(
 
 	backend.Override(opts...)
 
-	if !backend.stripTrailingXFF && backend.starknet-proxydIP == "" {
-		log.Warn("proxied requests' XFF header will not contain the starknet-proxyd ip address")
+	if !backend.stripTrailingXFF && backend.noriIP == "" {
+		log.Warn("proxied requests' XFF header will not contain the nori ip address")
 	}
 
 	return backend
@@ -544,8 +544,8 @@ func (b *Backend) doForward(ctx context.Context, rpcReqs []*RPCReq, isBatch bool
 	xForwardedFor := GetXForwardedFor(ctx)
 	if b.stripTrailingXFF {
 		xForwardedFor = stripXFF(xForwardedFor)
-	} else if b.starknet-proxydIP != "" {
-		xForwardedFor = fmt.Sprintf("%s, %s", xForwardedFor, b.starknet-proxydIP)
+	} else if b.noriIP != "" {
+		xForwardedFor = fmt.Sprintf("%s, %s", xForwardedFor, b.noriIP)
 	}
 
 	httpReq.Header.Set("content-type", "application/json")
@@ -1011,7 +1011,7 @@ func (w *WSProxier) clientPump(ctx context.Context, errC chan error) {
 				"err", err,
 			)
 			msg = mustMarshalJSON(NewRPCErrorRes(id, err))
-			RecordRPCError(ctx, Backendstarknet-proxyd, method, err)
+			RecordRPCError(ctx, Backendnori, method, err)
 
 			// Send error response to client
 			err = w.writeClientConn(msgType, msg)
@@ -1025,7 +1025,7 @@ func (w *WSProxier) clientPump(ctx context.Context, errC chan error) {
 		// Send eth_accounts requests directly to the client
 		if req.Method == "eth_accounts" {
 			msg = mustMarshalJSON(NewRPCRes(req.ID, emptyArrayResponse))
-			RecordRPCForward(ctx, Backendstarknet-proxyd, "eth_accounts", RPCRequestSourceWS)
+			RecordRPCForward(ctx, Backendnori, "eth_accounts", RPCRequestSourceWS)
 			err = w.writeClientConn(msgType, msg)
 			if err != nil {
 				errC <- err

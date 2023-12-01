@@ -29,7 +29,7 @@ func main() {
 		),
 	)
 
-	log.Info("starting starknet-proxyd", "version", GitVersion, "commit", GitCommit, "date", GitDate)
+	log.Info("starting nori", "version", GitVersion, "commit", GitCommit, "date", GitDate)
 
 	if len(os.Args) < 2 {
 		log.Crit("must specify a config file on the command line")
@@ -68,7 +68,7 @@ func main() {
 
 	_, shutdown, err := starknet - proxyd.Start(config)
 	if err != nil {
-		log.Crit("error starting starknet-proxyd", "err", err)
+		log.Crit("error starting nori", "err", err)
 	}
 
 	sig := make(chan os.Signal, 1)

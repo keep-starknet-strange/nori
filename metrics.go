@@ -1,4 +1,4 @@
-package starknet-proxyd
+package nori
 
 import (
 	"context"
@@ -13,12 +13,12 @@ import (
 )
 
 const (
-	MetricsNamespace = "starknet-proxyd"
+	MetricsNamespace = "nori"
 
 	RPCRequestSourceHTTP = "http"
 	RPCRequestSourceWS   = "ws"
 
-	Backendstarknet-proxyd = "starknet-proxyd"
+	Backendnori   = "nori"
 	SourceClient  = "client"
 	SourceBackend = "backend"
 	MethodUnknown = "unknown"

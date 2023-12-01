@@ -1,4 +1,4 @@
-package starknet-proxyd
+package nori
 
 import (
 	"context"
@@ -153,7 +153,7 @@ func Start(config *Config) (*Server, func(), error) {
 		if cfg.StripTrailingXFF {
 			opts = append(opts, WithStrippedTrailingXFF())
 		}
-		opts = append(opts, Withstarknet-proxydIP(os.Getenv("starknet-proxyd_IP")))
+		opts = append(opts, WithnoriIP(os.Getenv("nori_IP")))
 		opts = append(opts, WithConsensusSkipPeerCountCheck(cfg.ConsensusSkipPeerCountCheck))
 		opts = append(opts, WithConsensusForcedCandidate(cfg.ConsensusForcedCandidate))
 		opts = append(opts, WithWeight(cfg.Weight))
@@ -355,10 +355,10 @@ func Start(config *Config) (*Server, func(), error) {
 	}
 
 	<-errTimer.C
-	log.Info("started starknet-proxyd")
+	log.Info("started nori")
 
 	shutdownFunc := func() {
-		log.Info("shutting down starknet-proxyd")
+		log.Info("shutting down nori")
 		srv.Shutdown()
 		log.Info("goodbye")
 	}

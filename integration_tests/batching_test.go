@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ethereum-optimism/optimism/starknet-proxyd"
+	"github.com/abdelhamidbakhta/nori"
 	"github.com/stretchr/testify/require"
 )
 
@@ -39,7 +39,7 @@ func TestBatching(t *testing.T) {
 		name                 string
 		handler              http.Handler
 		mocks                []mockResult
-		reqs                 []*starknet-proxyd.RPCReq
+		reqs                 []*nori.RPCReq
 		expectedRes          string
 		maxUpstreamBatchSize int
 		numExpectedForwards  int
@@ -48,7 +48,7 @@ func TestBatching(t *testing.T) {
 		{
 			name:  "backend returns batches out of order",
 			mocks: []mockResult{chainIDMock1, chainIDMock2, chainIDMock3},
-			reqs: []*starknet-proxyd.RPCReq{
+			reqs: []*nori.RPCReq{
 				NewRPCReq("1", "eth_chainId", nil),
 				NewRPCReq("2", "eth_chainId", nil),
 				NewRPCReq("3", "eth_chainId", nil),
@@ -61,7 +61,7 @@ func TestBatching(t *testing.T) {
 			// infura behavior
 			name:    "backend returns single RPC response object as error",
 			handler: SingleResponseHandler(500, `{"jsonrpc":"2.0","error":{"code":-32001,"message":"internal server error"},"id":1}`),
-			reqs: []*starknet-proxyd.RPCReq{
+			reqs: []*nori.RPCReq{
 				NewRPCReq("1", "eth_chainId", nil),
 				NewRPCReq("2", "eth_chainId", nil),
 			},
@@ -75,7 +75,7 @@ func TestBatching(t *testing.T) {
 		{
 			name:    "backend returns single RPC response object for minibatches",
 			handler: SingleResponseHandler(500, `{"jsonrpc":"2.0","error":{"code":-32001,"message":"internal server error"},"id":1}`),
-			reqs: []*starknet-proxyd.RPCReq{
+			reqs: []*nori.RPCReq{
 				NewRPCReq("1", "eth_chainId", nil),
 				NewRPCReq("2", "eth_chainId", nil),
 			},
@@ -94,7 +94,7 @@ func TestBatching(t *testing.T) {
 				chainIDMock1,
 				callMock1,
 			},
-			reqs: []*starknet-proxyd.RPCReq{
+			reqs: []*nori.RPCReq{
 				NewRPCReq("1", "net_version", nil),
 				NewRPCReq("2", "eth_chainId", nil),
 				NewRPCReq("1", "eth_chainId", nil),
@@ -107,7 +107,7 @@ func TestBatching(t *testing.T) {
 		{
 			name:  "over max size",
 			mocks: []mockResult{},
-			reqs: []*starknet-proxyd.RPCReq{
+			reqs: []*nori.RPCReq{
 				NewRPCReq("1", "net_version", nil),
 				NewRPCReq("2", "eth_chainId", nil),
 				NewRPCReq("3", "eth_chainId", nil),
@@ -124,7 +124,7 @@ func TestBatching(t *testing.T) {
 			mocks: []mockResult{
 				callMock1,
 			},
-			reqs: []*starknet-proxyd.RPCReq{
+			reqs: []*nori.RPCReq{
 				NewRPCReq("1", "eth_call", nil),
 				NewRPCReq("2", "eth_accounts", nil),
 			},
@@ -135,7 +135,7 @@ func TestBatching(t *testing.T) {
 		{
 			name:  "large upstream response gets dropped",
 			mocks: []mockResult{chainIDMock1, chainIDMock2},
-			reqs: []*starknet-proxyd.RPCReq{
+			reqs: []*nori.RPCReq{
 				NewRPCReq("1", "eth_chainId", nil),
 				NewRPCReq("2", "eth_chainId", nil),
 			},
@@ -164,8 +164,8 @@ func TestBatching(t *testing.T) {
 			defer goodBackend.Close()
 			require.NoError(t, os.Setenv("GOOD_BACKEND_RPC_URL", goodBackend.URL()))
 
-			client := Newstarknet-proxydClient("http://127.0.0.1:8545")
-			_, shutdown, err := starknet-proxyd.Start(config)
+			client := NewnoriClient("http://127.0.0.1:8545")
+			_, shutdown, err := nori.Start(config)
 			require.NoError(t, err)
 			defer shutdown()
 

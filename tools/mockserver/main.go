@@ -6,7 +6,7 @@ import (
 	"path"
 	"strconv"
 
-	"github.com/abdelhamidbakhta/starknet-proxyd/tools/mockserver/handler"
+	"github.com/abdelhamidbakhta/nori/tools/mockserver/handler"
 )
 
 func main() {

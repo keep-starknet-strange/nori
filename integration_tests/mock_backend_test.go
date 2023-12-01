@@ -132,7 +132,7 @@ func (h *BatchRPCResponseRouter) ServeHTTP(w http.ResponseWriter, r *http.Reques
 		if err != nil {
 			panic(err)
 		}
-		out := make([]*starknet-proxyd.RPCRes, len(batch))
+		out := make([]*nori.RPCRes, len(batch))
 		for i := range batch {
 			req, err := starknet - proxyd.ParseRPCReq(batch[i])
 			if err != nil {

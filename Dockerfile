@@ -6,17 +6,17 @@ ARG GITVERSION=docker
 
 RUN apk add make jq git gcc musl-dev linux-headers
 
-COPY ./starknet-proxyd /app
+COPY ./nori /app
 
 WORKDIR /app
 
-RUN make starknet-proxyd
+RUN make nori
 
 FROM alpine:3.18
 
 RUN apk add bind-tools jq curl bash git redis
 
-COPY ./starknet-proxyd/entrypoint.sh /bin/entrypoint.sh
+COPY ./nori/entrypoint.sh /bin/entrypoint.sh
 
 RUN apk update && \
     apk add ca-certificates && \
@@ -24,9 +24,9 @@ RUN apk update && \
 
 EXPOSE 8080
 
-VOLUME /etc/starknet-proxyd
+VOLUME /etc/nori
 
-COPY --from=builder /app/bin/starknet-proxyd /bin/starknet-proxyd
+COPY --from=builder /app/bin/nori /bin/nori
 
 ENTRYPOINT ["/bin/entrypoint.sh"]
-CMD ["/bin/starknet-proxyd", "/etc/starknet-proxyd/starknet-proxyd.toml"]
+CMD ["/bin/nori", "/etc/nori/nori.toml"]

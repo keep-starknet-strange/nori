@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum-optimism/optimism/starknet-proxyd"
+	"github.com/abdelhamidbakhta/nori"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/require"
@@ -24,7 +24,7 @@ func TestConcurrentWSPanic(t *testing.T) {
 	readyCh := make(chan struct{}, 1)
 	quitC := make(chan struct{})
 
-	// Pull out the backend -> starknet-proxyd conn so that we can spam it directly.
+	// Pull out the backend -> nori conn so that we can spam it directly.
 	// Use a sync.Once to make sure we only do that once, for the first
 	// connection.
 	backend := NewMockWSBackend(func(conn *websocket.Conn) {
@@ -38,9 +38,9 @@ func TestConcurrentWSPanic(t *testing.T) {
 	require.NoError(t, os.Setenv("GOOD_BACKEND_RPC_URL", backend.URL()))
 
 	config := ReadConfig("ws")
-	_, shutdown, err := starknet-proxyd.Start(config)
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
-	client, err := Newstarknet-proxydWSClient("ws://127.0.0.1:8546", nil, nil)
+	client, err := NewnoriWSClient("ws://127.0.0.1:8546", nil, nil)
 	require.NoError(t, err)
 	defer shutdown()
 
@@ -122,14 +122,14 @@ type clientHandler struct {
 }
 
 func (c *clientHandler) MsgCB(msgType int, data []byte) {
-	cb := c.msgCB.Load().(starknet-proxydWSClientOnMessage)
+	cb := c.msgCB.Load().(noriWSClientOnMessage)
 	if cb == nil {
 		return
 	}
 	cb(msgType, data)
 }
 
-func (c *clientHandler) SetMsgCB(cb starknet-proxydWSClientOnMessage) {
+func (c *clientHandler) SetMsgCB(cb noriWSClientOnMessage) {
 	c.msgCB.Store(cb)
 }
 
@@ -147,9 +147,9 @@ func TestWS(t *testing.T) {
 	require.NoError(t, os.Setenv("GOOD_BACKEND_RPC_URL", backend.URL()))
 
 	config := ReadConfig("ws")
-	_, shutdown, err := starknet-proxyd.Start(config)
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
-	client, err := Newstarknet-proxydWSClient("ws://127.0.0.1:8546", func(msgType int, data []byte) {
+	client, err := NewnoriWSClient("ws://127.0.0.1:8546", func(msgType int, data []byte) {
 		clientHdlr.MsgCB(msgType, data)
 	}, nil)
 	defer client.HardClose()
@@ -238,13 +238,13 @@ func TestWSClientClosure(t *testing.T) {
 	require.NoError(t, os.Setenv("GOOD_BACKEND_RPC_URL", backend.URL()))
 
 	config := ReadConfig("ws")
-	_, shutdown, err := starknet-proxyd.Start(config)
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 
 	for _, closeType := range []string{"soft", "hard"} {
 		t.Run(closeType, func(t *testing.T) {
-			client, err := Newstarknet-proxydWSClient("ws://127.0.0.1:8546", func(msgType int, data []byte) {
+			client, err := NewnoriWSClient("ws://127.0.0.1:8546", func(msgType int, data []byte) {
 				clientHdlr.MsgCB(msgType, data)
 			}, nil)
 			require.NoError(t, err)
@@ -285,11 +285,11 @@ func TestWSClientExceedReadLimit(t *testing.T) {
 	require.NoError(t, os.Setenv("GOOD_BACKEND_RPC_URL", backend.URL()))
 
 	config := ReadConfig("ws")
-	_, shutdown, err := starknet-proxyd.Start(config)
+	_, shutdown, err := nori.Start(config)
 	require.NoError(t, err)
 	defer shutdown()
 
-	client, err := Newstarknet-proxydWSClient("ws://127.0.0.1:8546", func(msgType int, data []byte) {
+	client, err := NewnoriWSClient("ws://127.0.0.1:8546", func(msgType int, data []byte) {
 		clientHdlr.MsgCB(msgType, data)
 	}, nil)
 	require.NoError(t, err)

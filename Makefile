@@ -3,9 +3,9 @@ LDFLAGSSTRING +=-X main.GitDate=$(GITDATE)
 LDFLAGSSTRING +=-X main.GitVersion=$(GITVERSION)
 LDFLAGS := -ldflags "$(LDFLAGSSTRING)"
 
-starknet-proxyd:
-	go build -v $(LDFLAGS) -o ./bin/starknet-proxyd ./cmd/starknet-proxyd
-.PHONY: starknet-proxyd
+nori:
+	go build -v $(LDFLAGS) -o ./bin/nori ./cmd/nori
+.PHONY: nori
 
 fmt:
 	go mod tidy
