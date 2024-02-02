@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/abdelhamidbakhta/nori"
+	"github.com/keep-starknet-strange/nori"
 
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/abdelhamidbakhta/nori"
+	"github.com/keep-starknet-strange/nori"
 	"github.com/stretchr/testify/require"
 )
 

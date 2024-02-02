@@ -10,7 +10,7 @@ import (
 	"syscall"
 
 	"github.com/BurntSushi/toml"
-	"github.com/abdelhamidbakhta/nori"
+	"github.com/keep-starknet-strange/nori"
 	"github.com/ethereum/go-ethereum/log"
 )
 
