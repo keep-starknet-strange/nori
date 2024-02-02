@@ -136,7 +136,7 @@ Response example
 }
 ```
 
-See [op-node receipt fetcher](https://github.com/abdelhamidbakhta/nori/blob/186e46a47647a51a658e699e9ff047d39444c2de/op-node/sources/receipts.go#L186-L253).
+See [op-node receipt fetcher](https://github.com/keep-starknet-strange/nori/blob/186e46a47647a51a658e699e9ff047d39444c2de/op-node/sources/receipts.go#L186-L253).
 
 
 ## Metrics

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/abdelhamidbakhta/nori"
+	"github.com/keep-starknet-strange/nori"
 	"github.com/gorilla/websocket"
 )
 

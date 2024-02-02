@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/abdelhamidbakhta/nori"
+	"github.com/keep-starknet-strange/nori"
 
 	"github.com/stretchr/testify/require"
 )

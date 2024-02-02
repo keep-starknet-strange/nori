@@ -12,8 +12,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
 
-	"github.com/abdelhamidbakhta/nori"
-	ms "github.com/abdelhamidbakhta/nori/tools/mockserver/handler"
+	"github.com/keep-starknet-strange/nori"
+	ms "github.com/keep-starknet-strange/nori/tools/mockserver/handler"
 
 	"github.com/stretchr/testify/require"
 )

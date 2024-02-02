@@ -1,4 +1,4 @@
-module github.com/abdelhamidbakhta/nori
+module github.com/keep-starknet-strange/nori
 
 go 1.21
 
