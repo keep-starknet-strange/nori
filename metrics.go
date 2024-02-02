@@ -18,7 +18,7 @@ const (
 	RPCRequestSourceHTTP = "http"
 	RPCRequestSourceWS   = "ws"
 
-	Backendnori   = "nori"
+	BackendNori   = "nori"
 	SourceClient  = "client"
 	SourceBackend = "backend"
 	MethodUnknown = "unknown"

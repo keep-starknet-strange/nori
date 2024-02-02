@@ -231,7 +231,7 @@ func WithStrippedTrailingXFF() BackendOpt {
 	}
 }
 
-func WithnoriIP(ip string) BackendOpt {
+func WithNoriIP(ip string) BackendOpt {
 	return func(b *Backend) {
 		b.noriIP = ip
 	}
@@ -285,6 +285,7 @@ type indexedReqRes struct {
 	res   *RPCRes
 }
 
+const noriHealthzMethod = "nori_healthz"
 const ConsensusGetReceiptsMethod = "consensus_getReceipts"
 
 const ReceiptsTargetDebugGetRawReceipts = "debug_getRawReceipts"
@@ -1011,7 +1012,7 @@ func (w *WSProxier) clientPump(ctx context.Context, errC chan error) {
 				"err", err,
 			)
 			msg = mustMarshalJSON(NewRPCErrorRes(id, err))
-			RecordRPCError(ctx, Backendnori, method, err)
+			RecordRPCError(ctx, BackendNori, method, err)
 
 			// Send error response to client
 			err = w.writeClientConn(msgType, msg)
@@ -1025,7 +1026,7 @@ func (w *WSProxier) clientPump(ctx context.Context, errC chan error) {
 		// Send eth_accounts requests directly to the client
 		if req.Method == "eth_accounts" {
 			msg = mustMarshalJSON(NewRPCRes(req.ID, emptyArrayResponse))
-			RecordRPCForward(ctx, Backendnori, "eth_accounts", RPCRequestSourceWS)
+			RecordRPCForward(ctx, BackendNori, "eth_accounts", RPCRequestSourceWS)
 			err = w.writeClientConn(msgType, msg)
 			if err != nil {
 				errC <- err

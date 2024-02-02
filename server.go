@@ -36,7 +36,7 @@ const (
 	ContextKeyXForwardedFor      = "x_forwarded_for"
 	DefaultMaxBatchRPCCallsLimit = 100
 	MaxBatchRPCCallsHardLimit    = 1000
-	cacheStatusHdr               = "X-nori-Cache-Status"
+	cacheStatusHdr               = "X-Nori-Cache-Status"
 	defaultRPCTimeout            = 10 * time.Second
 	defaultBodySizeLimit         = 256 * opt.KiB
 	defaultWSHandshakeTimeout    = 10 * time.Second
@@ -305,7 +305,7 @@ func (s *Server) HandleRPC(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if isLimited("") {
-		RecordRPCError(ctx, Backendnori, "unknown", ErrOverRateLimit)
+		RecordRPCError(ctx, BackendNori, "unknown", ErrOverRateLimit)
 		log.Warn(
 			"rate limited request",
 			"req_id", GetReqID(ctx),
@@ -330,7 +330,7 @@ func (s *Server) HandleRPC(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(LimitReader(r.Body, s.maxBodySize))
 	if errors.Is(err, ErrLimitReaderOverLimit) {
 		log.Error("request body too large", "req_id", GetReqID(ctx))
-		RecordRPCError(ctx, Backendnori, MethodUnknown, ErrRequestBodyTooLarge)
+		RecordRPCError(ctx, BackendNori, MethodUnknown, ErrRequestBodyTooLarge)
 		writeRPCError(ctx, w, nil, ErrRequestBodyTooLarge)
 		return
 	}
@@ -353,7 +353,7 @@ func (s *Server) HandleRPC(w http.ResponseWriter, r *http.Request) {
 		reqs, err := ParseBatchRPCReq(body)
 		if err != nil {
 			log.Error("error parsing batch RPC request", "err", err)
-			RecordRPCError(ctx, Backendnori, MethodUnknown, err)
+			RecordRPCError(ctx, BackendNori, MethodUnknown, err)
 			writeRPCError(ctx, w, nil, ErrParseErr)
 			return
 		}
@@ -361,7 +361,7 @@ func (s *Server) HandleRPC(w http.ResponseWriter, r *http.Request) {
 		RecordBatchSize(len(reqs))
 
 		if len(reqs) > s.maxBatchSize {
-			RecordRPCError(ctx, Backendnori, MethodUnknown, ErrTooManyBatchRequests)
+			RecordRPCError(ctx, BackendNori, MethodUnknown, ErrTooManyBatchRequests)
 			writeRPCError(ctx, w, nil, ErrTooManyBatchRequests)
 			return
 		}
@@ -436,13 +436,13 @@ func (s *Server) handleBatchRPC(ctx context.Context, reqs []json.RawMessage, isL
 		}
 
 		if err := ValidateRPCReq(parsedReq); err != nil {
-			RecordRPCError(ctx, Backendnori, MethodUnknown, err)
+			RecordRPCError(ctx, BackendNori, MethodUnknown, err)
 			responses[i] = NewRPCErrorRes(nil, err)
 			continue
 		}
 
 		if parsedReq.Method == "eth_accounts" {
-			RecordRPCForward(ctx, Backendnori, "eth_accounts", RPCRequestSourceHTTP)
+			RecordRPCForward(ctx, BackendNori, "eth_accounts", RPCRequestSourceHTTP)
 			responses[i] = NewRPCRes(parsedReq.ID, emptyArrayResponse)
 			continue
 		}
@@ -457,7 +457,7 @@ func (s *Server) handleBatchRPC(ctx context.Context, reqs []json.RawMessage, isL
 				"req_id", GetReqID(ctx),
 				"method", parsedReq.Method,
 			)
-			RecordRPCError(ctx, Backendnori, MethodUnknown, ErrMethodNotWhitelisted)
+			RecordRPCError(ctx, BackendNori, MethodUnknown, ErrMethodNotWhitelisted)
 			responses[i] = NewRPCErrorRes(parsedReq.ID, ErrMethodNotWhitelisted)
 			continue
 		}
@@ -473,7 +473,7 @@ func (s *Server) handleBatchRPC(ctx context.Context, reqs []json.RawMessage, isL
 				"req_id", GetReqID(ctx),
 				"method", parsedReq.Method,
 			)
-			RecordRPCError(ctx, Backendnori, parsedReq.Method, ErrOverRateLimit)
+			RecordRPCError(ctx, BackendNori, parsedReq.Method, ErrOverRateLimit)
 			responses[i] = NewRPCErrorRes(parsedReq.ID, ErrOverRateLimit)
 			continue
 		}
@@ -483,7 +483,7 @@ func (s *Server) handleBatchRPC(ctx context.Context, reqs []json.RawMessage, isL
 		// isLimited method.
 		if parsedReq.Method == "eth_sendRawTransaction" && s.senderLim != nil {
 			if err := s.rateLimitSender(ctx, parsedReq); err != nil {
-				RecordRPCError(ctx, Backendnori, parsedReq.Method, err)
+				RecordRPCError(ctx, BackendNori, parsedReq.Method, err)
 				responses[i] = NewRPCErrorRes(parsedReq.ID, err)
 				continue
 			}
@@ -677,7 +677,7 @@ func (s *Server) isGlobalLimit(method string) bool {
 func (s *Server) rateLimitSender(ctx context.Context, req *RPCReq) error {
 	var params []string
 	if err := json.Unmarshal(req.Params, &params); err != nil {
-		log.Debug("error unmarshaling raw transaction params", "err", err, "req_Id", GetReqID(ctx))
+		log.Debug("error unmarshalling raw transaction params", "err", err, "req_Id", GetReqID(ctx))
 		return ErrParseErr
 	}
 
@@ -770,7 +770,7 @@ func writeRPCRes(ctx context.Context, w http.ResponseWriter, res *RPCRes) {
 	enc := json.NewEncoder(ww)
 	if err := enc.Encode(res); err != nil {
 		log.Error("error writing rpc response", "err", err)
-		RecordRPCError(ctx, Backendnori, MethodUnknown, err)
+		RecordRPCError(ctx, BackendNori, MethodUnknown, err)
 		return
 	}
 	httpResponseCodesTotal.WithLabelValues(strconv.Itoa(statusCode)).Inc()
@@ -784,7 +784,7 @@ func writeBatchRPCRes(ctx context.Context, w http.ResponseWriter, res []*RPCRes)
 	enc := json.NewEncoder(ww)
 	if err := enc.Encode(res); err != nil {
 		log.Error("error writing batch rpc response", "err", err)
-		RecordRPCError(ctx, Backendnori, MethodUnknown, err)
+		RecordRPCError(ctx, BackendNori, MethodUnknown, err)
 		return
 	}
 	RecordResponsePayloadSize(ctx, ww.Len)
