@@ -153,7 +153,7 @@ func Start(config *Config) (*Server, func(), error) {
 		if cfg.StripTrailingXFF {
 			opts = append(opts, WithStrippedTrailingXFF())
 		}
-		opts = append(opts, WithnoriIP(os.Getenv("nori_IP")))
+		opts = append(opts, WithNoriIP(os.Getenv("NORI_IP")))
 		opts = append(opts, WithConsensusSkipPeerCountCheck(cfg.ConsensusSkipPeerCountCheck))
 		opts = append(opts, WithConsensusForcedCandidate(cfg.ConsensusForcedCandidate))
 		opts = append(opts, WithWeight(cfg.Weight))
