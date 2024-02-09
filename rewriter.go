@@ -50,7 +50,7 @@ func RewriteTags(rctx RewriteContext, req *RPCReq, res *RPCRes) (RewriteResult, 
 // RewriteResult informs the decision of the rewrite
 func RewriteResponse(rctx RewriteContext, req *RPCReq, res *RPCRes) (RewriteResult, error) {
 	switch req.Method {
-	case "eth_blockNumber":
+	case "starknet_blockNumber":
 		res.Result = rctx.latest
 		return RewriteOverrideResponse, nil
 	}
@@ -72,7 +72,7 @@ func RewriteRequest(rctx RewriteContext, req *RPCReq, res *RPCRes) (RewriteResul
 		"eth_getTransactionCount",
 		"eth_call":
 		return rewriteParam(rctx, req, res, 1, false, true)
-	case "eth_getStorageAt",
+	case "starknet_getStorageAt",
 		"eth_getProof":
 		return rewriteParam(rctx, req, res, 2, false, true)
 	case "eth_getBlockTransactionCountByNumber",

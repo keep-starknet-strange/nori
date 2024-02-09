@@ -133,6 +133,7 @@ type BatchConfig struct {
 	ErrorMessage string `toml:"error_message"`
 }
 
+// TODO check if it's needed
 // SenderRateLimitConfig configures the sender-based rate limiter
 // for eth_sendRawTransaction requests.
 type SenderRateLimitConfig struct {

@@ -151,7 +151,7 @@ func newRPCCache(cache Cache) RPCCache {
 		},
 	}
 	handlers := map[string]RPCMethodHandler{
-		"eth_chainId":                           staticHandler,
+		"starknet_chainId":                      staticHandler,
 		"net_version":                           staticHandler,
 		"eth_getBlockTransactionCountByHash":    staticHandler,
 		"eth_getUncleCountByBlockHash":          staticHandler,
