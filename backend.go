@@ -289,6 +289,7 @@ const noriHealthzMethod = "nori_healthz"
 const ConsensusGetReceiptsMethod = "consensus_getReceipts"
 
 const ReceiptsTargetDebugGetRawReceipts = "debug_getRawReceipts"
+
 // not supported (https://docs.alchemy.com/reference/alchemy-gettransactionreceipts)
 // const ReceiptsTargetAlchemyGetTransactionReceipts = "alchemy_getTransactionReceipts"
 const ReceiptsTargetParityGetTransactionReceipts = "parity_getBlockReceipts"
@@ -476,7 +477,7 @@ func (b *Backend) doForward(ctx context.Context, rpcReqs []*RPCReq, isBatch bool
 			if rpcReq.Method == ConsensusGetReceiptsMethod {
 				translatedReqs[string(rpcReq.ID)] = rpcReq
 				rpcReq.Method = b.receiptsTarget
-				var reqParams []rpc.BlockNumberOrHash
+				var reqParams []rpc.BlockID
 				err := json.Unmarshal(rpcReq.Params, &reqParams)
 				if err != nil {
 					return nil, ErrInvalidRequest("invalid request")
@@ -490,10 +491,12 @@ func (b *Backend) doForward(ctx context.Context, rpcReqs []*RPCReq, isBatch bool
 					// conventional methods use an array of strings having either block number or block hash
 					// i.e. ["0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b"]
 					params := make([]string, 1)
-					if reqParams[0].BlockNumber != nil {
-						params[0] = reqParams[0].BlockNumber.String()
+					if reqParams[0].Number != nil {
+						params[0] = strconv.FormatUint(*reqParams[0].Number, 10)
+					} else if reqParams[0].Hash != nil {
+						params[0] = reqParams[0].Hash.String()
 					} else {
-						params[0] = reqParams[0].BlockHash.Hex()
+						params[0] = reqParams[0].Tag
 					}
 					translatedParams = mustMarshalJSON(params)
 				default:

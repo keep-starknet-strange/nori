@@ -441,12 +441,6 @@ func (s *Server) handleBatchRPC(ctx context.Context, reqs []json.RawMessage, isL
 			continue
 		}
 
-		if parsedReq.Method == "eth_accounts" {
-			RecordRPCForward(ctx, BackendNori, "eth_accounts", RPCRequestSourceHTTP)
-			responses[i] = NewRPCRes(parsedReq.ID, emptyArrayResponse)
-			continue
-		}
-
 		group := s.rpcMethodMappings[parsedReq.Method]
 		if group == "" {
 			// use unknown below to prevent DOS vector that fills up memory

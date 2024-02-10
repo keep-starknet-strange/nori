@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
-
 	"github.com/ethereum/go-ethereum/log"
 )
 
@@ -559,7 +558,7 @@ func (cp *ConsensusPoller) getPeerCount(ctx context.Context, be *Backend) (count
 // isInSync is a convenient wrapper to check if the backend is in sync from the network
 func (cp *ConsensusPoller) isInSync(ctx context.Context, be *Backend) (result bool, err error) {
 	var rpcRes RPCRes
-	err = be.ForwardRPC(ctx, &rpcRes, "67", "eth_syncing")
+	err = be.ForwardRPC(ctx, &rpcRes, "67", "starknet_syncing")
 	if err != nil {
 		return false, err
 	}

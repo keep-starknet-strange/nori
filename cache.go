@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/NethermindEth/starknet.go/rpc"
 	"github.com/redis/go-redis/v9"
 
 	"github.com/golang/snappy"
@@ -131,7 +131,7 @@ func newRPCCache(cache Cache) RPCCache {
 		filterGet: func(req *RPCReq) bool {
 			// cache only if the request is for a block hash
 
-			var p []rpc.BlockNumberOrHash
+			var p []rpc.BlockID
 			err := json.Unmarshal(req.Params, &p)
 			if err != nil {
 				return false
@@ -139,7 +139,7 @@ func newRPCCache(cache Cache) RPCCache {
 			if len(p) != 1 {
 				return false
 			}
-			return p[0].BlockHash != nil
+			return p[0].Hash != nil
 		},
 		filterPut: func(req *RPCReq, res *RPCRes) bool {
 			// don't cache if response contains 0 receipts
@@ -151,14 +151,12 @@ func newRPCCache(cache Cache) RPCCache {
 		},
 	}
 	handlers := map[string]RPCMethodHandler{
-		"starknet_chainId":                      staticHandler,
-		"net_version":                           staticHandler,
-		"eth_getBlockTransactionCountByHash":    staticHandler,
-		"eth_getUncleCountByBlockHash":          staticHandler,
-		"eth_getBlockByHash":                    staticHandler,
-		"eth_getTransactionByBlockHashAndIndex": staticHandler,
-		"eth_getUncleByBlockHashAndIndex":       staticHandler,
-		"debug_getRawReceipts":                  debugGetRawReceiptsHandler,
+		"debug_getRawReceipts":                     debugGetRawReceiptsHandler,
+		"net_version":                              staticHandler,
+		"starknet_chainId":                         staticHandler,
+		"starknet_getBlockByHash":                  staticHandler,
+		"starknet_getBlockTransactionCount":        staticHandler,
+		"starknet_getTransactionByBlockIdAndIndex": staticHandler,
 	}
 	return &rpcCache{
 		cache:    cache,

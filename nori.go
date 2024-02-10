@@ -5,11 +5,11 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/redis/go-redis/v9"
@@ -372,7 +372,6 @@ func validateReceiptsTarget(val string) (string, error) {
 	}
 	switch val {
 	case ReceiptsTargetDebugGetRawReceipts,
-		ReceiptsTargetAlchemyGetTransactionReceipts,
 		ReceiptsTargetEthGetTransactionReceipts,
 		ReceiptsTargetParityGetTransactionReceipts:
 		return val, nil

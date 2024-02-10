@@ -10,8 +10,8 @@ import (
 	"syscall"
 
 	"github.com/BurntSushi/toml"
-	"github.com/keep-starknet-strange/nori"
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/keep-starknet-strange/nori"
 )
 
 var (
@@ -23,12 +23,14 @@ var (
 func main() {
 	// Set up logger with a default INFO level in case we fail to parse flags.
 	// Otherwise the final critical log won't show what the parsing error was.
+    /* TODO deprecated
 	log.Root().SetHandler(
 		log.LvlFilterHandler(
 			log.LvlInfo,
 			log.StreamHandler(os.Stdout, log.JSONFormat()),
 		),
 	)
+    */
 
 	log.Info("starting nori", "version", GitVersion, "commit", GitCommit, "date", GitDate)
 
@@ -42,6 +44,7 @@ func main() {
 	}
 
 	// update log level from config
+    /* TODO deprecated
 	logLevel, err := log.LvlFromString(config.Server.LogLevel)
 	if err != nil {
 		logLevel = log.LvlInfo
@@ -54,7 +57,7 @@ func main() {
 			logLevel,
 			log.StreamHandler(os.Stdout, log.JSONFormat()),
 		),
-	)
+	)*/
 
 	if config.Server.EnablePprof {
 		log.Info("starting pprof", "addr", "0.0.0.0", "port", "6060")
