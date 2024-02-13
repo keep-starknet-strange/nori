@@ -12,6 +12,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/keep-starknet-strange/nori"
+	"golang.org/x/exp/slog"
 )
 
 var (
@@ -23,14 +24,7 @@ var (
 func main() {
 	// Set up logger with a default INFO level in case we fail to parse flags.
 	// Otherwise the final critical log won't show what the parsing error was.
-    /* TODO deprecated
-	log.Root().SetHandler(
-		log.LvlFilterHandler(
-			log.LvlInfo,
-			log.StreamHandler(os.Stdout, log.JSONFormat()),
-		),
-	)
-    */
+    log.SetDefault(log.NewLogger(log.LogfmtHandlerWithLevel(os.Stdout, log.LvlInfo)))
 
 	log.Info("starting nori", "version", GitVersion, "commit", GitCommit, "date", GitDate)
 
@@ -44,20 +38,26 @@ func main() {
 	}
 
 	// update log level from config
-    /* TODO deprecated
-	logLevel, err := log.LvlFromString(config.Server.LogLevel)
-	if err != nil {
-		logLevel = log.LvlInfo
-		if config.Server.LogLevel != "" {
-			log.Warn("invalid server.log_level set: " + config.Server.LogLevel)
-		}
-	}
-	log.Root().SetHandler(
-		log.LvlFilterHandler(
-			logLevel,
-			log.StreamHandler(os.Stdout, log.JSONFormat()),
-		),
-	)*/
+    logLevelString := config.Server.LogLevel
+    var logLevel slog.Level
+    switch logLevelString {
+    case "trace":
+        logLevel = log.LevelTrace
+    case "debug":
+        logLevel = log.LevelDebug
+    case "info":
+        logLevel = log.LevelInfo
+    case "warn":
+        logLevel = log.LevelWarn
+    case "error":
+        logLevel = log.LevelError
+    case "crit":
+        logLevel = log.LevelCrit
+    default:
+        logLevel = log.LevelInfo
+        log.Warn("invalid server.log_level set: " + logLevelString)
+    }
+    log.SetDefault(log.NewLogger(log.LogfmtHandlerWithLevel(os.Stdout, logLevel)))
 
 	if config.Server.EnablePprof {
 		log.Info("starting pprof", "addr", "0.0.0.0", "port", "6060")

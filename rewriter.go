@@ -94,6 +94,7 @@ func rewriteParam(rctx RewriteContext, req *RPCReq, res *RPCRes, pos int, requir
 	// support for https://eips.ethereum.org/EIPS/eip-1898
 	var val interface{}
 	var rw bool
+    /*
 	if blockNrOrHash {
 		bnh, err := remarshalBlockID(p[pos])
 		if err != nil {
@@ -118,12 +119,7 @@ func rewriteParam(rctx RewriteContext, req *RPCReq, res *RPCRes, pos int, requir
 		if !ok {
 			return RewriteOverrideError, errors.New("expected string")
 		}
-
-		val, rw, err = rewriteTag(rctx, s)
-		if err != nil {
-			return RewriteOverrideError, err
-		}
-	}
+	}*/
 
 	if rw {
 		p[pos] = val

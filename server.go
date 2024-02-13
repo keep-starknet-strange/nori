@@ -91,7 +91,6 @@ func NewServer(
 	enableServedByHeader bool,
 	cache RPCCache,
 	rateLimitConfig RateLimitConfig,
-	senderRateLimitConfig SenderRateLimitConfig,
 	enableRequestLog bool,
 	maxRequestBodyLogLen int,
 	maxBatchSize int,
@@ -166,9 +165,6 @@ func NewServer(
 		}
 	}
 	var senderLim FrontendRateLimiter
-	if senderRateLimitConfig.Enabled {
-		senderLim = limiterFactory(time.Duration(senderRateLimitConfig.Interval), senderRateLimitConfig.Limit, "senders")
-	}
 
 	rateLimitHeader := defaultRateLimitHeader
 	if rateLimitConfig.IPHeaderOverride != "" {
@@ -196,7 +192,6 @@ func NewServer(
 		overrideLims:           overrideLims,
 		globallyLimitedMethods: globalMethodLims,
 		senderLim:              senderLim,
-		allowedChainIds:        senderRateLimitConfig.AllowedChainIds,
 		limExemptOrigins:       limExemptOrigins,
 		limExemptUserAgents:    limExemptUserAgents,
 		rateLimitHeader:        rateLimitHeader,
