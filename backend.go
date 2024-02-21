@@ -17,9 +17,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/NethermindEth/starknet.go/rpc"
 	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rpc"
+
 	"github.com/gorilla/websocket"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/xaionaro-go/weightedshuffle"
@@ -289,19 +289,15 @@ const noriHealthzMethod = "nori_healthz"
 const ConsensusGetReceiptsMethod = "consensus_getReceipts"
 
 const ReceiptsTargetDebugGetRawReceipts = "debug_getRawReceipts"
-const ReceiptsTargetAlchemyGetTransactionReceipts = "alchemy_getTransactionReceipts"
-const ReceiptsTargetParityGetTransactionReceipts = "parity_getBlockReceipts"
-const ReceiptsTargetEthGetTransactionReceipts = "eth_getBlockReceipts"
+
+// not supported (https://docs.alchemy.com/reference/alchemy-gettransactionreceipts)
+// const ReceiptsTargetAlchemyGetTransactionReceipts = "alchemy_getTransactionReceipts"
+// available since v0.7.0-rc0
+const ReceiptsTargetStarknetGetTransactionReceipts = "starknet_getBlockWithReceipts"
 
 type ConsensusGetReceiptsResult struct {
 	Method string      `json:"method"`
 	Result interface{} `json:"result"`
-}
-
-// BlockHashOrNumberParameter is a non-conventional wrapper used by alchemy_getTransactionReceipts
-type BlockHashOrNumberParameter struct {
-	BlockHash   *common.Hash     `json:"blockHash"`
-	BlockNumber *rpc.BlockNumber `json:"blockNumber"`
 }
 
 func NewBackend(
@@ -481,7 +477,7 @@ func (b *Backend) doForward(ctx context.Context, rpcReqs []*RPCReq, isBatch bool
 			if rpcReq.Method == ConsensusGetReceiptsMethod {
 				translatedReqs[string(rpcReq.ID)] = rpcReq
 				rpcReq.Method = b.receiptsTarget
-				var reqParams []rpc.BlockNumberOrHash
+				var reqParams []rpc.BlockID
 				err := json.Unmarshal(rpcReq.Params, &reqParams)
 				if err != nil {
 					return nil, ErrInvalidRequest("invalid request")
@@ -490,25 +486,16 @@ func (b *Backend) doForward(ctx context.Context, rpcReqs []*RPCReq, isBatch bool
 				var translatedParams []byte
 				switch rpcReq.Method {
 				case ReceiptsTargetDebugGetRawReceipts,
-					ReceiptsTargetEthGetTransactionReceipts,
-					ReceiptsTargetParityGetTransactionReceipts:
+                    ReceiptsTargetStarknetGetTransactionReceipts:
 					// conventional methods use an array of strings having either block number or block hash
 					// i.e. ["0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b"]
 					params := make([]string, 1)
-					if reqParams[0].BlockNumber != nil {
-						params[0] = reqParams[0].BlockNumber.String()
+					if reqParams[0].Number != nil {
+						params[0] = strconv.FormatUint(*reqParams[0].Number, 10)
+					} else if reqParams[0].Hash != nil {
+						params[0] = reqParams[0].Hash.String()
 					} else {
-						params[0] = reqParams[0].BlockHash.Hex()
-					}
-					translatedParams = mustMarshalJSON(params)
-				case ReceiptsTargetAlchemyGetTransactionReceipts:
-					// alchemy uses an array of object with either block number or block hash
-					// i.e. [{ blockHash: "0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b" }]
-					params := make([]BlockHashOrNumberParameter, 1)
-					if reqParams[0].BlockNumber != nil {
-						params[0].BlockNumber = reqParams[0].BlockNumber
-					} else {
-						params[0].BlockHash = reqParams[0].BlockHash
+						params[0] = reqParams[0].Tag
 					}
 					translatedParams = mustMarshalJSON(params)
 				default:
@@ -1015,18 +1002,6 @@ func (w *WSProxier) clientPump(ctx context.Context, errC chan error) {
 			RecordRPCError(ctx, BackendNori, method, err)
 
 			// Send error response to client
-			err = w.writeClientConn(msgType, msg)
-			if err != nil {
-				errC <- err
-				return
-			}
-			continue
-		}
-
-		// Send eth_accounts requests directly to the client
-		if req.Method == "eth_accounts" {
-			msg = mustMarshalJSON(NewRPCRes(req.ID, emptyArrayResponse))
-			RecordRPCForward(ctx, BackendNori, "eth_accounts", RPCRequestSourceWS)
 			err = w.writeClientConn(msgType, msg)
 			if err != nil {
 				errC <- err

@@ -1,4 +1,4 @@
-- method: eth_getBlockByNumber
+- method: starknet_getBlockWithTxs
   block: latest
   response: >
     {
@@ -9,7 +9,7 @@
         "number": "0x2"
       }
     }
-- method: eth_getBlockByNumber
+- method: starknet_getBlockWithTxs
   block: 0x1
   response: >
     {
@@ -20,7 +20,7 @@
         "number": "0x1"
       }
     }
-- method: eth_getBlockByNumber
+- method: starknet_getBlockWithTxs
   block: 0x2
   response: >
     {
@@ -31,7 +31,7 @@
         "number": "0x2"
       }
     }
-- method: eth_getBlockByNumber
+- method: starknet_getBlockWithTxs
   block: 0x3
   response: >
     {

@@ -22,7 +22,7 @@ func TestRPCCacheImmutableRPCs(t *testing.T) {
 		{
 			req: &RPCReq{
 				JSONRPC: "2.0",
-				Method:  "eth_chainId",
+				Method:  "starknet_chainId",
 				ID:      ID,
 			},
 			res: &RPCRes{
@@ -30,7 +30,7 @@ func TestRPCCacheImmutableRPCs(t *testing.T) {
 				Result:  "0xff",
 				ID:      ID,
 			},
-			name: "eth_chainId",
+			name: "starknet_chainId",
 		},
 		{
 			req: &RPCReq{
@@ -48,58 +48,30 @@ func TestRPCCacheImmutableRPCs(t *testing.T) {
 		{
 			req: &RPCReq{
 				JSONRPC: "2.0",
-				Method:  "eth_getBlockTransactionCountByHash",
+				Method:  "starknet_getBlockTransactionCount",
 				Params:  mustMarshalJSON([]string{"0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238"}),
 				ID:      ID,
 			},
 			res: &RPCRes{
 				JSONRPC: "2.0",
-				Result:  `{"eth_getBlockTransactionCountByHash":"!"}`,
+				Result:  `{"starknet_getBlockTransactionCount":"!"}`,
 				ID:      ID,
 			},
-			name: "eth_getBlockTransactionCountByHash",
+			name: "starknet_getBlockTransactionCount",
 		},
 		{
 			req: &RPCReq{
 				JSONRPC: "2.0",
-				Method:  "eth_getUncleCountByBlockHash",
-				Params:  mustMarshalJSON([]string{"0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238"}),
-				ID:      ID,
-			},
-			res: &RPCRes{
-				JSONRPC: "2.0",
-				Result:  `{"eth_getUncleCountByBlockHash":"!"}`,
-				ID:      ID,
-			},
-			name: "eth_getUncleCountByBlockHash",
-		},
-		{
-			req: &RPCReq{
-				JSONRPC: "2.0",
-				Method:  "eth_getBlockByHash",
+				Method:  "starknet_getBlockWithTxs",
 				Params:  mustMarshalJSON([]string{"0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b", "false"}),
 				ID:      ID,
 			},
 			res: &RPCRes{
 				JSONRPC: "2.0",
-				Result:  `{"eth_getBlockByHash":"!"}`,
+				Result:  `{"starknet_getBlockWithTxs":"!"}`,
 				ID:      ID,
 			},
-			name: "eth_getBlockByHash",
-		},
-		{
-			req: &RPCReq{
-				JSONRPC: "2.0",
-				Method:  "eth_getUncleByBlockHashAndIndex",
-				Params:  mustMarshalJSON([]string{"0xb903239f8543d04b5dc1ba6579132b143087c68db1b2168786408fcbce568238", "0x90"}),
-				ID:      ID,
-			},
-			res: &RPCRes{
-				JSONRPC: "2.0",
-				Result:  `{"eth_getUncleByBlockHashAndIndex":"!"}`,
-				ID:      ID,
-			},
-			name: "eth_getUncleByBlockHashAndIndex",
+			name: "starknet_getBlockWithTxs",
 		},
 		{
 			req: &RPCReq{
@@ -140,50 +112,34 @@ func TestRPCCacheUnsupportedMethod(t *testing.T) {
 		name string
 	}{
 		{
-			name: "eth_syncing",
+			name: "starknet_syncing",
 			req: &RPCReq{
 				JSONRPC: "2.0",
-				Method:  "eth_syncing",
+				Method:  "starknet_syncing",
 				ID:      ID,
 			},
 		},
 		{
-			name: "eth_blockNumber",
+			name: "starknet_blockNumber",
 			req: &RPCReq{
 				JSONRPC: "2.0",
-				Method:  "eth_blockNumber",
+				Method:  "starknet_blockNumber",
 				ID:      ID,
 			},
 		},
 		{
-			name: "eth_getBlockByNumber",
+			name: "starknet_getBlockWithTxs",
 			req: &RPCReq{
 				JSONRPC: "2.0",
-				Method:  "eth_getBlockByNumber",
+				Method:  "starknet_getBlockWithTxs",
 				ID:      ID,
 			},
 		},
 		{
-			name: "eth_getBlockRange",
+			name: "starknet_call",
 			req: &RPCReq{
 				JSONRPC: "2.0",
-				Method:  "eth_getBlockRange",
-				ID:      ID,
-			},
-		},
-		{
-			name: "eth_gasPrice",
-			req: &RPCReq{
-				JSONRPC: "2.0",
-				Method:  "eth_gasPrice",
-				ID:      ID,
-			},
-		},
-		{
-			name: "eth_call",
-			req: &RPCReq{
-				JSONRPC: "2.0",
-				Method:  "eth_gasPrice",
+				Method:  "starknet_call",
 				ID:      ID,
 			},
 		},

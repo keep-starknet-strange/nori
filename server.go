@@ -91,7 +91,6 @@ func NewServer(
 	enableServedByHeader bool,
 	cache RPCCache,
 	rateLimitConfig RateLimitConfig,
-	senderRateLimitConfig SenderRateLimitConfig,
 	enableRequestLog bool,
 	maxRequestBodyLogLen int,
 	maxBatchSize int,
@@ -166,9 +165,6 @@ func NewServer(
 		}
 	}
 	var senderLim FrontendRateLimiter
-	if senderRateLimitConfig.Enabled {
-		senderLim = limiterFactory(time.Duration(senderRateLimitConfig.Interval), senderRateLimitConfig.Limit, "senders")
-	}
 
 	rateLimitHeader := defaultRateLimitHeader
 	if rateLimitConfig.IPHeaderOverride != "" {
@@ -196,7 +192,6 @@ func NewServer(
 		overrideLims:           overrideLims,
 		globallyLimitedMethods: globalMethodLims,
 		senderLim:              senderLim,
-		allowedChainIds:        senderRateLimitConfig.AllowedChainIds,
 		limExemptOrigins:       limExemptOrigins,
 		limExemptUserAgents:    limExemptUserAgents,
 		rateLimitHeader:        rateLimitHeader,
@@ -441,12 +436,6 @@ func (s *Server) handleBatchRPC(ctx context.Context, reqs []json.RawMessage, isL
 			continue
 		}
 
-		if parsedReq.Method == "eth_accounts" {
-			RecordRPCForward(ctx, BackendNori, "eth_accounts", RPCRequestSourceHTTP)
-			responses[i] = NewRPCRes(parsedReq.ID, emptyArrayResponse)
-			continue
-		}
-
 		group := s.rpcMethodMappings[parsedReq.Method]
 		if group == "" {
 			// use unknown below to prevent DOS vector that fills up memory
@@ -476,17 +465,6 @@ func (s *Server) handleBatchRPC(ctx context.Context, reqs []json.RawMessage, isL
 			RecordRPCError(ctx, BackendNori, parsedReq.Method, ErrOverRateLimit)
 			responses[i] = NewRPCErrorRes(parsedReq.ID, ErrOverRateLimit)
 			continue
-		}
-
-		// Apply a sender-based rate limit if it is enabled. Note that sender-based rate
-		// limits apply regardless of origin or user-agent. As such, they don't use the
-		// isLimited method.
-		if parsedReq.Method == "eth_sendRawTransaction" && s.senderLim != nil {
-			if err := s.rateLimitSender(ctx, parsedReq); err != nil {
-				RecordRPCError(ctx, BackendNori, parsedReq.Method, err)
-				responses[i] = NewRPCErrorRes(parsedReq.ID, err)
-				continue
-			}
 		}
 
 		id := string(parsedReq.ID)

@@ -1,5 +1,5 @@
 # List of WS methods to whitelist.
-ws_method_whitelist = ["eth_subscribe", "eth_call", "eth_chainId"]
+ws_method_whitelist = ["starknet_chainId"]
 # Enable WS on this backend group. There can only be one WS-enabled backend group.
 ws_backend_group = "main"
 
@@ -49,10 +49,16 @@ max_error_rate_threshold = 0.3
 
 [backends]
 # A map of backends by name.
+[backends.madara]
+rpc_url = "http://localhost:9944"
+
+[backends.katana]
+rpc_url = "http://localhost:5050"
+
 [backends.infura]
 # The URL to contact the backend at. Will be read from the environment
 # if an environment variable prefixed with $ is provided.
-rpc_url = ""
+rpc_url = "http://localhost"
 # The WS URL to contact the backend at. Will be read from the environment
 # if an environment variable prefixed with $ is provided.
 ws_url = ""
@@ -70,22 +76,18 @@ client_cert_file = ""
 client_key_file = ""
 # Allows backends to skip peer count checking, default false
 # consensus_skip_peer_count = true
-# Specified the target method to get receipts, default "debug_getRawReceipts"
-# See https://github.com/keep-starknet-strange/nori/blob/186e46a47647a51a658e699e9ff047d39444c2de/op-node/sources/receipts.go#L186-L253
-consensus_receipts_target = "eth_getBlockReceipts"
 
 [backends.alchemy]
-rpc_url = ""
+rpc_url = "http://localhost"
 ws_url = ""
 username = ""
 password = ""
 max_rps = 3
 max_ws_conns = 1
-consensus_receipts_target = "alchemy_getTransactionReceipts"
 
 [backend_groups]
 [backend_groups.main]
-backends = ["infura"]
+backends = ["madara"]
 # Enable consensus awareness for backend group, making it act as a load balancer, default false
 # consensus_aware = true
 # Period in which the backend wont serve requests if banned, default 5m
@@ -94,8 +96,6 @@ backends = ["infura"]
 # consensus_max_update_threshold = "20s"
 # Maximum block lag, default 8
 # consensus_max_block_lag = 16
-# Maximum block range (for eth_getLogs method), no default
-# consensus_max_block_range = 20000
 # Minimum peer count, default 3
 # consensus_min_peer_count = 4
 
@@ -110,10 +110,35 @@ backends = ["alchemy"]
 # read from the environment if an environment variable prefixed with $
 # is provided. Note that you will need to quote the environment variable
 # in order for it to be value TOML, e.g. "$FOO_AUTH_KEY" = "foo_alias".
-secret = "test"
+# secret = "test"
 
 # Mapping of methods to backend groups.
 [rpc_method_mappings]
-eth_call = "main"
-eth_chainId = "main"
-eth_blockNumber = "alchemy"
+starknet_addDeclareTransaction = "main"
+starknet_addDeployAccountTransaction = "main"
+starknet_addInvokeTransaction = "main"
+starknet_blockNumber = "main"
+starknet_blockHashAndNumber = "main"
+starknet_call = "main"
+starknet_chainId = "main"
+starknet_estimateFee = "main"
+starknet_estimateMessageFee = "main"
+starknet_getBlockTransactionCount = "main"
+starknet_getBlockWithTxHashes = "main"
+starknet_getBlockWithTxs = "main"
+starknet_getClass = "main"
+starknet_getClassAt = "main"
+starknet_getClassHashAt = "main"
+starknet_getEvents = "main"
+starknet_getNonce = "main"
+starknet_getStateUpdate = "main"
+starknet_getStorageAt = "main"
+starknet_getTransactionByBlockIdAndIndex = "main"
+starknet_getTransactionByHash = "main"
+starknet_getTransactionReceipt = "main"
+starknet_getTransactionStatus = "main"
+starknet_simulateTransaction = "main"
+starknet_specVersion = "main"
+starknet_syncing = "main"
+starknet_traceBlockTransactions = "main"
+starknet_traceTransaction = "main"

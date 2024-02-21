@@ -2,7 +2,6 @@ package nori
 
 import (
 	"fmt"
-	"math/big"
 	"os"
 	"strings"
 	"time"
@@ -133,15 +132,6 @@ type BatchConfig struct {
 	ErrorMessage string `toml:"error_message"`
 }
 
-// SenderRateLimitConfig configures the sender-based rate limiter
-// for eth_sendRawTransaction requests.
-type SenderRateLimitConfig struct {
-	Enabled         bool
-	Interval        TOMLDuration
-	Limit           int
-	AllowedChainIds []*big.Int `toml:"allowed_chain_ids"`
-}
-
 type Config struct {
 	WSBackendGroup        string                `toml:"ws_backend_group"`
 	Server                ServerConfig          `toml:"server"`
@@ -157,7 +147,6 @@ type Config struct {
 	RPCMethodMappings     map[string]string     `toml:"rpc_method_mappings"`
 	WSMethodWhitelist     []string              `toml:"ws_method_whitelist"`
 	WhitelistErrorMessage string                `toml:"whitelist_error_message"`
-	SenderRateLimit       SenderRateLimitConfig `toml:"sender_rate_limit"`
 }
 
 func ReadFromEnvOrConfig(value string) (string, error) {

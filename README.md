@@ -33,8 +33,8 @@ To enable this behavior, you must set `consensus_aware` value to `true` in the b
 
 When consensus awareness is enabled, `nori` will poll the backends for their states and resolve a consensus group based on:
 * the common ancestor `latest` block, i.e. if a backend is experiencing a fork, the fork won't be visible to the clients
-* the lowest `safe` block
-* the lowest `finalized` block
+* the lowest `safe` block (ACCEPTED_ON_L2 status)
+* the lowest `finalized` block (ACCEPTED_ON_L1 status)
 * peer count
 * sync state
 
@@ -58,42 +58,43 @@ and won't receive any traffic during this period.
 
 When consensus awareness is enabled, `nori` will enforce the consensus state transparently for all the clients.
 
-For example, if a client requests the `eth_getBlockByNumber` method with the `latest` tag,
+For example, if a client requests the `starknet_getBlockWithTxs` method with the `latest` tag,
 `nori` will rewrite the request to use the resolved latest block from the consensus group
 and forward it to the backend.
 
 The following request methods are rewritten:
-* `eth_getLogs`
-* `eth_newFilter`
-* `eth_getBalance`
-* `eth_getCode`
-* `eth_getTransactionCount`
-* `eth_call`
-* `eth_getStorageAt`
-* `eth_getBlockTransactionCountByNumber`
-* `eth_getUncleCountByBlockNumber`
-* `eth_getBlockByNumber`
-* `eth_getTransactionByBlockNumberAndIndex`
-* `eth_getUncleByBlockNumberAndIndex`
-* `debug_getRawReceipts`
+* `starknet_call` *
+* `starknet_estimateFee` *
+* `starknet_estimateMessageFee` *
+* `starknet_getBlockTransactionCount` *
+* `starknet_getBlockWithReceipts` *
+* `starknet_getBlockWithTxHashes` *
+* `starknet_getBlockWithTxs` *
+* `starknet_getClass` *
+* `starknet_getClassAt` *
+* `starknet_getClassHashAt` *
+* `starknet_getNonce` *
+* `starknet_getStateUpdate` *
+* `starknet_getStorageAt` *
+* `starknet_getTransactionByBlockIdAndIndex` *
 
-And `eth_blockNumber` response is overridden with current block consensus.
+\* not implemented
+
+And `starknet_blockNumber` response is overridden with current block consensus.
 
 
 ## Cacheable methods
 
 Cache use Redis and can be enabled for the following immutable methods:
 
-* `eth_chainId`
-* `net_version`
-* `eth_getBlockTransactionCountByHash`
-* `eth_getUncleCountByBlockHash`
-* `eth_getBlockByHash`
-* `eth_getTransactionByBlockHashAndIndex`
-* `eth_getUncleByBlockHashAndIndex`
-* `debug_getRawReceipts` (block hash only)
+* `starknet_chainId`
+* `starknet_getBlockTransactionCount`
+* `starknet_getBlockWithReceipts` (block hash only)
+* `starknet_getBlockWithTxs`
+* `starknet_getTransactionByIdAndIndex`
 
 ## Meta method `consensus_getReceipts`
+> Only available after v0.7.0-rc0
 
 To support backends with different specifications in the same backend group,
 nori exposes a convenient method to fetch receipts abstracting away
@@ -102,7 +103,7 @@ what specific backend will serve the request.
 Each backend specifies their preferred method to fetch receipts with `consensus_receipts_target` config,
 which will be translated from `consensus_getReceipts`.
 
-This method takes a `blockNumberOrHash` (i.e. `tag|qty|hash`)
+This method takes a `blockId` (i.e. `tag|qty|hash`)
 and returns the receipts for all transactions in the block.
 
 Request example
@@ -110,15 +111,12 @@ Request example
 {
   "jsonrpc":"2.0",
   "id": 1,
-  "params": ["0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b"]
+  "params": [{"block_hash": "0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b"}]
 }
 ```
 
 It currently supports translation to the following targets:
-* `debug_getRawReceipts(blockOrHash)` (default)
-* `alchemy_getTransactionReceipts(blockOrHash)`
-* `parity_getBlockReceipts(blockOrHash)`
-* `eth_getBlockReceipts(blockOrHash)`
+* `starknet_getBlockWithReceipts(blockId)` (default)
 
 The selected target is returned in the response, in a wrapped result.
 
@@ -135,9 +133,6 @@ Response example
   }
 }
 ```
-
-See [op-node receipt fetcher](https://github.com/keep-starknet-strange/nori/blob/186e46a47647a51a658e699e9ff047d39444c2de/op-node/sources/receipts.go#L186-L253).
-
 
 ## Metrics
 

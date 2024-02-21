@@ -5,11 +5,11 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/redis/go-redis/v9"
@@ -61,15 +61,6 @@ func Start(config *Config) (*Server, func(), error) {
 	}
 	if config.BatchConfig.ErrorMessage != "" {
 		ErrTooManyBatchRequests.Message = config.BatchConfig.ErrorMessage
-	}
-
-	if config.SenderRateLimit.Enabled {
-		if config.SenderRateLimit.Limit <= 0 {
-			return nil, nil, errors.New("limit in sender_rate_limit must be > 0")
-		}
-		if time.Duration(config.SenderRateLimit.Interval) < time.Second {
-			return nil, nil, errors.New("interval in sender_rate_limit must be >= 1s")
-		}
 	}
 
 	maxConcurrentRPCs := config.Server.MaxConcurrentRPCs
@@ -252,7 +243,6 @@ func Start(config *Config) (*Server, func(), error) {
 		config.Server.EnableXServedByHeader,
 		rpcCache,
 		config.RateLimit,
-		config.SenderRateLimit,
 		config.Server.EnableRequestLog,
 		config.Server.MaxRequestBodyLogLen,
 		config.BatchConfig.MaxSize,
@@ -372,9 +362,7 @@ func validateReceiptsTarget(val string) (string, error) {
 	}
 	switch val {
 	case ReceiptsTargetDebugGetRawReceipts,
-		ReceiptsTargetAlchemyGetTransactionReceipts,
-		ReceiptsTargetEthGetTransactionReceipts,
-		ReceiptsTargetParityGetTransactionReceipts:
+		ReceiptsTargetStarknetGetTransactionReceipts:
 		return val, nil
 	default:
 		return "", fmt.Errorf("invalid receipts target: %s", val)

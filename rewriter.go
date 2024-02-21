@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/NethermindEth/starknet.go/rpc"
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/rpc"
 )
 
 type RewriteContext struct {
@@ -236,17 +236,21 @@ func rewriteTagMap(rctx RewriteContext, m map[string]interface{}, key string) (b
 	return false, nil
 }
 
-func remarshalBlockNumberOrHash(current interface{}) (*rpc.BlockNumberOrHash, error) {
+func remarshalBlockNumberOrHash(current interface{}) (*rpc.BlockID, error) {
+    /*
 	jv, err := json.Marshal(current)
 	if err != nil {
 		return nil, err
 	}
+    */
 
-	var bnh rpc.BlockNumberOrHash
+	var bnh rpc.BlockID
+    /*
 	err = bnh.UnmarshalJSON(jv)
 	if err != nil {
 		return nil, err
 	}
+    */
 
 	return &bnh, nil
 }
@@ -258,11 +262,12 @@ func rewriteTag(rctx RewriteContext, current string) (string, bool, error) {
 	}
 
 	// this is a hash, not a block
-	if bnh.BlockNumber == nil {
+	if bnh.Number == nil {
 		return current, false, nil
 	}
 
-	switch *bnh.BlockNumber {
+	switch *bnh.Number {
+    /*
 	case rpc.PendingBlockNumber,
 		rpc.EarliestBlockNumber:
 		return current, false, nil
@@ -272,8 +277,9 @@ func rewriteTag(rctx RewriteContext, current string) (string, bool, error) {
 		return rctx.safe.String(), true, nil
 	case rpc.LatestBlockNumber:
 		return rctx.latest.String(), true, nil
+    */
 	default:
-		if bnh.BlockNumber.Int64() > int64(rctx.latest) {
+		if int64(*bnh.Number) > int64(rctx.latest) {
 			return "", false, ErrRewriteBlockOutOfRange
 		}
 	}
@@ -281,13 +287,14 @@ func rewriteTag(rctx RewriteContext, current string) (string, bool, error) {
 	return current, false, nil
 }
 
-func rewriteTagBlockNumberOrHash(rctx RewriteContext, current *rpc.BlockNumberOrHash) (*rpc.BlockNumberOrHash, bool, error) {
+func rewriteTagBlockNumberOrHash(rctx RewriteContext, current *rpc.BlockID) (*rpc.BlockID, bool, error) {
 	// this is a hash, not a block number
-	if current.BlockNumber == nil {
+	if current.Number == nil {
 		return current, false, nil
 	}
 
-	switch *current.BlockNumber {
+	switch *current.Number {
+    /*
 	case rpc.PendingBlockNumber,
 		rpc.EarliestBlockNumber:
 		return current, false, nil
@@ -300,8 +307,9 @@ func rewriteTagBlockNumberOrHash(rctx RewriteContext, current *rpc.BlockNumberOr
 	case rpc.LatestBlockNumber:
 		bn := rpc.BlockNumberOrHashWithNumber(rpc.BlockNumber(rctx.latest))
 		return &bn, true, nil
+    */
 	default:
-		if current.BlockNumber.Int64() > int64(rctx.latest) {
+		if int64(*current.Number) > int64(rctx.latest) {
 			return nil, false, ErrRewriteBlockOutOfRange
 		}
 	}
