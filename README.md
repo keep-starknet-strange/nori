@@ -33,8 +33,8 @@ To enable this behavior, you must set `consensus_aware` value to `true` in the b
 
 When consensus awareness is enabled, `nori` will poll the backends for their states and resolve a consensus group based on:
 * the common ancestor `latest` block, i.e. if a backend is experiencing a fork, the fork won't be visible to the clients
-* the lowest `safe` block
-* the lowest `finalized` block
+* the lowest `safe` block (ACCEPTED_ON_L2 status)
+* the lowest `finalized` block (ACCEPTED_ON_L1 status)
 * peer count
 * sync state
 
@@ -63,20 +63,20 @@ For example, if a client requests the `starknet_getBlockWithTxs` method with the
 and forward it to the backend.
 
 The following request methods are rewritten:
-* `starknet_call`
+* `starknet_call` *
 * `starknet_estimateFee` *
 * `starknet_estimateMessageFee` *
-* `starknet_getBlockTransactionCount`
-* `starknet_getBlockWithReceipts`
+* `starknet_getBlockTransactionCount` *
+* `starknet_getBlockWithReceipts` *
 * `starknet_getBlockWithTxHashes` *
-* `starknet_getBlockWithTxs`
+* `starknet_getBlockWithTxs` *
 * `starknet_getClass` *
 * `starknet_getClassAt` *
 * `starknet_getClassHashAt` *
 * `starknet_getNonce` *
 * `starknet_getStateUpdate` *
-* `starknet_getStorageAt`
-* `starknet_getTransactionByBlockIdAndIndex`
+* `starknet_getStorageAt` *
+* `starknet_getTransactionByBlockIdAndIndex` *
 
 \* not implemented
 
