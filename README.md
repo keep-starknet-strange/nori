@@ -89,9 +89,9 @@ Cache use Redis and can be enabled for the following immutable methods:
 
 * `starknet_chainId`
 * `starknet_getBlockTransactionCount`
+* `starknet_getBlockWithReceipts` (block hash only)
 * `starknet_getBlockWithTxs`
 * `starknet_getTransactionByIdAndIndex`
-* `starknet_getBlockWithReceipts` (block hash only)
 
 ## Meta method `consensus_getReceipts`
 > Only available after v0.7.0-rc0

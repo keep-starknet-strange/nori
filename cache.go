@@ -127,7 +127,7 @@ type rpcCache struct {
 
 func newRPCCache(cache Cache) RPCCache {
 	staticHandler := &StaticMethodHandler{cache: cache}
-	debugGetRawReceiptsHandler := &StaticMethodHandler{cache: cache,
+	receiptsHandler := &StaticMethodHandler{cache: cache,
 		filterGet: func(req *RPCReq) bool {
 			// cache only if the request is for a block hash
 
@@ -141,7 +141,7 @@ func newRPCCache(cache Cache) RPCCache {
 			}
 			return p[0].Hash != nil
 		},
-		filterPut: func(req *RPCReq, res *RPCRes) bool {
+		filterPut: func(_ *RPCReq, res *RPCRes) bool {
 			// don't cache if response contains 0 receipts
 			rawReceipts, ok := res.Result.([]interface{})
 			if !ok {
@@ -151,11 +151,11 @@ func newRPCCache(cache Cache) RPCCache {
 		},
 	}
 	handlers := map[string]RPCMethodHandler{
-		"debug_getRawReceipts":                     debugGetRawReceiptsHandler,
-		"net_version":                              staticHandler,
 		"starknet_chainId":                         staticHandler,
-		"starknet_getBlockWithTxs":                 staticHandler,
+		"starknet_getBlockTransactionByIdAndIndex": staticHandler,
 		"starknet_getBlockTransactionCount":        staticHandler,
+        "starknet_getBlockWithReceipts":            receiptsHandler,
+		"starknet_getBlockWithTxs":                 staticHandler,
 		"starknet_getTransactionByBlockIdAndIndex": staticHandler,
 	}
 	return &rpcCache{
