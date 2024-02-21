@@ -426,10 +426,10 @@ func TestRewriteRequest(t *testing.T) {
 		},
 		/* default block parameter, at position 0 */
 		{
-			name: "eth_getBlockByNumber omit block, should add",
+			name: "starknet_getBlockWithTxs omit block, should add",
 			args: args{
 				rctx: RewriteContext{latest: hexutil.Uint64(100)},
-				req:  &RPCReq{Method: "eth_getBlockByNumber", Params: mustMarshalJSON([]string{})},
+				req:  &RPCReq{Method: "starknet_getBlockWithTxs", Params: mustMarshalJSON([]string{})},
 				res:  nil,
 			},
 			expected: RewriteOverrideRequest,
@@ -442,10 +442,10 @@ func TestRewriteRequest(t *testing.T) {
 			},
 		},
 		{
-			name: "eth_getBlockByNumber latest",
+			name: "starknet_getBlockWithTxs latest",
 			args: args{
 				rctx: RewriteContext{latest: hexutil.Uint64(100)},
-				req:  &RPCReq{Method: "eth_getBlockByNumber", Params: mustMarshalJSON([]string{"latest"})},
+				req:  &RPCReq{Method: "starknet_getBlockWithTxs", Params: mustMarshalJSON([]string{"latest"})},
 				res:  nil,
 			},
 			expected: RewriteOverrideRequest,
@@ -458,10 +458,10 @@ func TestRewriteRequest(t *testing.T) {
 			},
 		},
 		{
-			name: "eth_getBlockByNumber finalized",
+			name: "starknet_getBlockWithTxs finalized",
 			args: args{
 				rctx: RewriteContext{latest: hexutil.Uint64(100), finalized: hexutil.Uint64(55)},
-				req:  &RPCReq{Method: "eth_getBlockByNumber", Params: mustMarshalJSON([]string{"finalized"})},
+				req:  &RPCReq{Method: "starknet_getBlockWithTxs", Params: mustMarshalJSON([]string{"finalized"})},
 				res:  nil,
 			},
 			expected: RewriteOverrideRequest,
@@ -474,10 +474,10 @@ func TestRewriteRequest(t *testing.T) {
 			},
 		},
 		{
-			name: "eth_getBlockByNumber safe",
+			name: "starknet_getBlockWithTxs safe",
 			args: args{
 				rctx: RewriteContext{latest: hexutil.Uint64(100), safe: hexutil.Uint64(50)},
-				req:  &RPCReq{Method: "eth_getBlockByNumber", Params: mustMarshalJSON([]string{"safe"})},
+				req:  &RPCReq{Method: "starknet_getBlockWithTxs", Params: mustMarshalJSON([]string{"safe"})},
 				res:  nil,
 			},
 			expected: RewriteOverrideRequest,
@@ -490,10 +490,10 @@ func TestRewriteRequest(t *testing.T) {
 			},
 		},
 		{
-			name: "eth_getBlockByNumber within range",
+			name: "starknet_getBlockWithTxs within range",
 			args: args{
 				rctx: RewriteContext{latest: hexutil.Uint64(100)},
-				req:  &RPCReq{Method: "eth_getBlockByNumber", Params: mustMarshalJSON([]string{hexutil.Uint64(55).String()})},
+				req:  &RPCReq{Method: "starknet_getBlockWithTxs", Params: mustMarshalJSON([]string{hexutil.Uint64(55).String()})},
 				res:  nil,
 			},
 			expected: RewriteNone,
@@ -506,10 +506,10 @@ func TestRewriteRequest(t *testing.T) {
 			},
 		},
 		{
-			name: "eth_getBlockByNumber out of range",
+			name: "starknet_getBlockWithTxs out of range",
 			args: args{
 				rctx: RewriteContext{latest: hexutil.Uint64(100)},
-				req:  &RPCReq{Method: "eth_getBlockByNumber", Params: mustMarshalJSON([]string{hexutil.Uint64(111).String()})},
+				req:  &RPCReq{Method: "starknet_getBlockWithTxs", Params: mustMarshalJSON([]string{hexutil.Uint64(111).String()})},
 				res:  nil,
 			},
 			expected:    RewriteOverrideError,
@@ -616,10 +616,10 @@ func TestRewriteRequest(t *testing.T) {
 	tests = generalize(tests, "eth_getCode", "eth_getBalance")
 	tests = generalize(tests, "eth_getCode", "eth_getTransactionCount")
 	tests = generalize(tests, "eth_getCode", "eth_call")
-	tests = generalize(tests, "eth_getBlockByNumber", "eth_getBlockTransactionCountByNumber")
-	tests = generalize(tests, "eth_getBlockByNumber", "eth_getUncleCountByBlockNumber")
-	tests = generalize(tests, "eth_getBlockByNumber", "eth_getTransactionByBlockNumberAndIndex")
-	tests = generalize(tests, "eth_getBlockByNumber", "eth_getUncleByBlockNumberAndIndex")
+	tests = generalize(tests, "starknet_getBlockWithTxs", "eth_getBlockTransactionCountByNumber")
+	tests = generalize(tests, "starknet_getBlockWithTxs", "eth_getUncleCountByBlockNumber")
+	tests = generalize(tests, "starknet_getBlockWithTxs", "eth_getTransactionByBlockNumberAndIndex")
+	tests = generalize(tests, "starknet_getBlockWithTxs", "eth_getUncleByBlockNumberAndIndex")
 	tests = generalize(tests, "eth_getStorageSlotAt", "eth_getProof")
 
 	for _, tt := range tests {

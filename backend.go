@@ -292,8 +292,8 @@ const ReceiptsTargetDebugGetRawReceipts = "debug_getRawReceipts"
 
 // not supported (https://docs.alchemy.com/reference/alchemy-gettransactionreceipts)
 // const ReceiptsTargetAlchemyGetTransactionReceipts = "alchemy_getTransactionReceipts"
-const ReceiptsTargetParityGetTransactionReceipts = "parity_getBlockReceipts"
-const ReceiptsTargetEthGetTransactionReceipts = "eth_getBlockReceipts"
+// available since v0.7.0-rc0
+const ReceiptsTargetStarknetGetTransactionReceipts = "starknet_getBlockWithReceipts"
 
 type ConsensusGetReceiptsResult struct {
 	Method string      `json:"method"`
@@ -486,8 +486,7 @@ func (b *Backend) doForward(ctx context.Context, rpcReqs []*RPCReq, isBatch bool
 				var translatedParams []byte
 				switch rpcReq.Method {
 				case ReceiptsTargetDebugGetRawReceipts,
-					ReceiptsTargetEthGetTransactionReceipts,
-					ReceiptsTargetParityGetTransactionReceipts:
+                    ReceiptsTargetStarknetGetTransactionReceipts:
 					// conventional methods use an array of strings having either block number or block hash
 					// i.e. ["0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b"]
 					params := make([]string, 1)

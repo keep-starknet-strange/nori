@@ -154,7 +154,7 @@ func newRPCCache(cache Cache) RPCCache {
 		"debug_getRawReceipts":                     debugGetRawReceiptsHandler,
 		"net_version":                              staticHandler,
 		"starknet_chainId":                         staticHandler,
-		"starknet_getBlockByHash":                  staticHandler,
+		"starknet_getBlockWithTxs":                 staticHandler,
 		"starknet_getBlockTransactionCount":        staticHandler,
 		"starknet_getTransactionByBlockIdAndIndex": staticHandler,
 	}

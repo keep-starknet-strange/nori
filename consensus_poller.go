@@ -522,14 +522,14 @@ func (cp *ConsensusPoller) Reset() {
 // fetchBlock is a convenient wrapper to make a request to get a block directly from the backend
 func (cp *ConsensusPoller) fetchBlock(ctx context.Context, be *Backend, block string) (blockNumber hexutil.Uint64, blockHash string, err error) {
 	var rpcRes RPCRes
-	err = be.ForwardRPC(ctx, &rpcRes, "67", "eth_getBlockByNumber", block, false)
+	err = be.ForwardRPC(ctx, &rpcRes, "67", "starknet_getBlockWithTxs", block, false)
 	if err != nil {
 		return 0, "", err
 	}
 
 	jsonMap, ok := rpcRes.Result.(map[string]interface{})
 	if !ok {
-		return 0, "", fmt.Errorf("unexpected response to eth_getBlockByNumber on backend %s", be.Name)
+		return 0, "", fmt.Errorf("unexpected response to starknet_getBlockWithTxs on backend %s", be.Name)
 	}
 	blockNumber = hexutil.Uint64(hexutil.MustDecodeUint64(jsonMap["number"].(string)))
 	blockHash = jsonMap["hash"].(string)

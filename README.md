@@ -58,21 +58,19 @@ and won't receive any traffic during this period.
 
 When consensus awareness is enabled, `nori` will enforce the consensus state transparently for all the clients.
 
-For example, if a client requests the `eth_getBlockByNumber` method with the `latest` tag,
+For example, if a client requests the `starknet_getBlockWithTxs` method with the `latest` tag,
 `nori` will rewrite the request to use the resolved latest block from the consensus group
 and forward it to the backend.
 
 The following request methods are rewritten:
-* `eth_getLogs`
 * `eth_newFilter`
 * `eth_getBalance`
-* `eth_getCode`
 * `eth_getTransactionCount`
-* `eth_call`
-* `eth_getStorageAt`
+* `starknet_call`
+* `starknet_getStorageAt`
 * `eth_getBlockTransactionCountByNumber`
 * `eth_getUncleCountByBlockNumber`
-* `eth_getBlockByNumber`
+* `starknet_getBlockWithTxs`
 * `eth_getTransactionByBlockNumberAndIndex`
 * `eth_getUncleByBlockNumberAndIndex`
 * `debug_getRawReceipts`
@@ -88,7 +86,7 @@ Cache use Redis and can be enabled for the following immutable methods:
 * `net_version`
 * `eth_getBlockTransactionCountByHash`
 * `eth_getUncleCountByBlockHash`
-* `eth_getBlockByHash`
+* `starknet_getBlockWithTxs`
 * `eth_getTransactionByBlockHashAndIndex`
 * `eth_getUncleByBlockHashAndIndex`
 * `debug_getRawReceipts` (block hash only)
@@ -117,7 +115,6 @@ Request example
 It currently supports translation to the following targets:
 * `debug_getRawReceipts(blockOrHash)` (default)
 * `alchemy_getTransactionReceipts(blockOrHash)`
-* `parity_getBlockReceipts(blockOrHash)`
 * `eth_getBlockReceipts(blockOrHash)`
 
 The selected target is returned in the response, in a wrapped result.
@@ -135,9 +132,6 @@ Response example
   }
 }
 ```
-
-See [op-node receipt fetcher](https://github.com/keep-starknet-strange/nori/blob/186e46a47647a51a658e699e9ff047d39444c2de/op-node/sources/receipts.go#L186-L253).
-
 
 ## Metrics
 

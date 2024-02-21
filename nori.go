@@ -362,8 +362,7 @@ func validateReceiptsTarget(val string) (string, error) {
 	}
 	switch val {
 	case ReceiptsTargetDebugGetRawReceipts,
-		ReceiptsTargetEthGetTransactionReceipts,
-		ReceiptsTargetParityGetTransactionReceipts:
+		ReceiptsTargetStarknetGetTransactionReceipts:
 		return val, nil
 	default:
 		return "", fmt.Errorf("invalid receipts target: %s", val)

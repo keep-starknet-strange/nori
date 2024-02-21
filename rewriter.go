@@ -69,7 +69,7 @@ func RewriteRequest(rctx RewriteContext, req *RPCReq, res *RPCRes) (RewriteResul
 	case "starknet_getStorageAt":
 		return rewriteParam(rctx, req, res, 2, false, true)
 	case "starknet_getBlockTransactionCount",
-		"starknet_getBlockByNumber",
+		"starknet_getBlockWithTxs",
         "starknet_getTransactionByBlockIdAndIndex":
 		return rewriteParam(rctx, req, res, 0, false, false)
 	}

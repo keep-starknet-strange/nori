@@ -62,16 +62,16 @@ func TestRPCCacheImmutableRPCs(t *testing.T) {
 		{
 			req: &RPCReq{
 				JSONRPC: "2.0",
-				Method:  "starknet_getBlockByHash",
+				Method:  "starknet_getBlockWithTxs",
 				Params:  mustMarshalJSON([]string{"0xc6ef2fc5426d6ad6fd9e2a26abeab0aa2411b7ab17f30a99d3cb96aed1d1055b", "false"}),
 				ID:      ID,
 			},
 			res: &RPCRes{
 				JSONRPC: "2.0",
-				Result:  `{"starknet_getBlockByHash":"!"}`,
+				Result:  `{"starknet_getBlockWithTxs":"!"}`,
 				ID:      ID,
 			},
-			name: "starknet_getBlockByHash",
+			name: "starknet_getBlockWithTxs",
 		},
 		{
 			req: &RPCReq{
@@ -128,10 +128,10 @@ func TestRPCCacheUnsupportedMethod(t *testing.T) {
 			},
 		},
 		{
-			name: "starknet_getBlockByNumber",
+			name: "starknet_getBlockWithTxs",
 			req: &RPCReq{
 				JSONRPC: "2.0",
-				Method:  "starknet_getBlockByNumber",
+				Method:  "starknet_getBlockWithTxs",
 				ID:      ID,
 			},
 		},
