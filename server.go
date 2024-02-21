@@ -467,17 +467,6 @@ func (s *Server) handleBatchRPC(ctx context.Context, reqs []json.RawMessage, isL
 			continue
 		}
 
-		// Apply a sender-based rate limit if it is enabled. Note that sender-based rate
-		// limits apply regardless of origin or user-agent. As such, they don't use the
-		// isLimited method.
-		if parsedReq.Method == "eth_sendRawTransaction" && s.senderLim != nil {
-			if err := s.rateLimitSender(ctx, parsedReq); err != nil {
-				RecordRPCError(ctx, BackendNori, parsedReq.Method, err)
-				responses[i] = NewRPCErrorRes(parsedReq.ID, err)
-				continue
-			}
-		}
-
 		id := string(parsedReq.ID)
 		// If this is a duplicate Request ID, move the Request to a new batchGroup
 		ids[id]++
